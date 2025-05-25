@@ -1,0 +1,66 @@
+server:
+  port: 7777
+  origin: 'https://agb-frontend.herokuapp.com'
+
+db:
+  host: 'localhost'
+  type: 'postgres'
+  port: 5432
+  username: 'postgres'
+  password: 'postgres'
+  database: 'agb'
+  synchronize: false
+
+jwt:
+  expiresIn: 900
+  refreshExpiresIn: 604800
+  cookieExpiresIn: 604800
+
+app:
+  fallbackLanguage: 'en'
+  name: 'AGB'
+  version: 'v0.1'
+  description: 'Official AGB API'
+  appUrl: 'https://agb-backend.herokuapp.com/'
+  frontendUrl: 'https://agb-frontend.herokuapp.com'
+  sameSite: true
+
+mail:
+  host: 'smtp.mailtrap.io'
+  port: 2525
+  user: 'f4a511d60957e6'
+  pass: '7522797b96cef0'
+  from: 'agb'
+  fromMail: 'noreply@agb.com'
+  preview: true
+  secure: false
+  ignoreTLS: true
+  queueName: 'agb-mail'
+
+queue:
+  driver: 'redis'
+  host: 'localhost'
+  port: 6379
+  db: ''
+  password: ''
+  username: ''
+
+throttle:
+  global:
+    ttl: 60
+    limit: 60
+  login:
+    prefix: 'login_fail_throttle'
+    limit: 5
+    duration: 2592000
+    blockDuration: 3000
+
+twofa:
+  authenticationAppNAme: 'agb'
+
+winston:
+  groupName: 'agb'
+  streamName: 'agb-stream'
+  awsAccessKeyId: ''
+  awsSecretAccessKey: ''
+  awsRegion: ''
