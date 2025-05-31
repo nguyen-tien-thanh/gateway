@@ -4,18 +4,15 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
-  Inject
+  Logger
 } from '@nestjs/common';
 import { Response } from 'express';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { Logger } from 'winston';
 
 @Catch(HttpException)
 export class CommonExceptionFilter implements ExceptionFilter {
-  constructor(
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-    private readonly i18n: I18nService
-  ) {}
+  private readonly logger = new Logger(CommonExceptionFilter.name);
+
+  constructor(private readonly i18n: I18nService) {}
 
   async catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();

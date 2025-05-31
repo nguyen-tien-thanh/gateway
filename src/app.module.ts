@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
 import * as path from 'path';
 import * as config from 'config';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -12,7 +12,6 @@ import {
   I18nModule,
   QueryResolver
 } from 'nestjs-i18n';
-import { WinstonModule } from 'nest-winston';
 
 import { AuthModule } from 'src/auth/auth.module';
 import { RolesModule } from 'src/role/roles.module';
@@ -26,13 +25,12 @@ import { CustomThrottlerGuard } from 'src/common/guard/custom-throttle.guard';
 import { DashboardModule } from 'src/dashboard/dashboard.module';
 import { AppController } from 'src/app.controller';
 import { DatabaseModule } from 'src/database/database.module';
-import winstonConfig from 'src/config/winston';
+import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 
 const appConfig = config.get('app');
 
 @Module({
   imports: [
-    WinstonModule.forRoot(winstonConfig),
     ThrottlerModule.forRootAsync({
       useFactory: () => throttleConfig
     }),
@@ -77,6 +75,10 @@ const appConfig = config.get('app');
     {
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor
     }
     // TODO: Re-implement i18n exception filter
     // {

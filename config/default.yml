@@ -57,10 +57,3 @@ throttle:
 
 twofa:
   authenticationAppNAme: 'agb'
-
-winston:
-  groupName: 'agb'
-  streamName: 'agb-stream'
-  awsAccessKeyId: ''
-  awsSecretAccessKey: ''
-  awsRegion: ''

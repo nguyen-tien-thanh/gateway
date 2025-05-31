@@ -9,7 +9,6 @@ import {
   SwaggerModule
 } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 import { AppModule } from 'src/app.module';
 
@@ -18,7 +17,7 @@ async function bootstrap() {
   const port = process.env.PORT || serverConfig.port;
   const app = await NestFactory.create(AppModule);
   app.use(helmet());
-  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+  app.useLogger(['log', 'error', 'warn', 'debug', 'verbose']);
   const apiConfig = config.get('app');
   if (process.env.NODE_ENV === 'development') {
     app.enableCors({
@@ -33,13 +32,11 @@ async function bootstrap() {
       .addBearerAuth()
       .build();
     const customOptions: SwaggerCustomOptions = {
-      swaggerOptions: {
-        persistAuthorization: true
-      },
+      swaggerOptions: { persistAuthorization: true },
       customSiteTitle: apiConfig.description
     };
     const document = SwaggerModule.createDocument(app, swaggerConfig);
-    SwaggerModule.setup('api-docs', app, document, customOptions);
+    SwaggerModule.setup('api', app, document, customOptions);
   } else {
     const whitelist = [apiConfig.get<string>('frontendUrl')];
     app.enableCors({
@@ -66,7 +63,11 @@ async function bootstrap() {
 
   app.use(cookieParser());
   await app.listen(port);
-  console.log(`Application listening in port: ${port}`);
+
+  console.log('\n -------------------------------------------');
+  console.log(` 🚀 ${process.env.NODE_ENV.toUpperCase()} mode`);
+  console.log(` 🌐 ${apiConfig.appUrl}`);
+  console.log(' -------------------------------------------\n');
 }
 
 bootstrap();

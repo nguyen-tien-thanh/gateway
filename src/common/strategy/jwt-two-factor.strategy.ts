@@ -15,7 +15,10 @@ export class JwtTwoFactorStrategy extends PassportStrategy(
 ) {
   constructor(private readonly userRepository: UserRepository) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        (request) => request?.cookies?.Authentication
+      ]),
       ignoreExpiration: false,
       secretOrKey: jwtConfig.secret
     });

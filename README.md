@@ -27,8 +27,6 @@
   - Helmet security headers
 
 - 📊 **Logging & Monitoring**
-  - Winston logger integration
-  - CloudWatch integration
   - Request logging
 
 ## Tech Stack
@@ -40,7 +38,6 @@
 - **Email:** Nodemailer
 - **Authentication:** JWT, Passport
 - **API Documentation:** Swagger
-- **Logging:** Winston
 - **Testing:** Jest
 
 ## Prerequisites
