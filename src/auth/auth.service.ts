@@ -39,7 +39,7 @@ import {
   UserSerializer
 } from 'src/auth/serializer/user.serializer';
 import { UserStatusEnum } from 'src/auth/user-status.enum';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { ValidationPayloadInterface } from 'src/common/interfaces/validation-error.interface';
 import { RefreshPaginateFilterDto } from 'src/refresh-token/dto/refresh-paginate-filter.dto';
 import { RefreshTokenSerializer } from 'src/refresh-token/serializer/refresh-token.serializer';

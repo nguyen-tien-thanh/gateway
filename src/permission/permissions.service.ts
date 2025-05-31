@@ -3,7 +3,7 @@ import { CreatePermissionDto } from './dto/create-permission.dto';
 import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { PermissionPaginateFilterDto } from './dto/permission-paginate-filter.dto';
 import { PermissionSerializer } from './serializer/permission.serializer';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { Permission, Prisma } from '@prisma/client';
 import { Pagination } from 'src/paginate';
 

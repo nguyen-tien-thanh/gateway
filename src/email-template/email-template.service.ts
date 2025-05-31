@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 
 import { CreateEmailTemplateDto } from 'src/email-template/dto/create-email-template.dto';
 import { UpdateEmailTemplateDto } from 'src/email-template/dto/update-email-template.dto';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { EmailTemplate } from 'src/email-template/serializer/email-template.serializer';
 import { EmailTemplatesSearchFilterDto } from 'src/email-template/dto/email-templates-search-filter.dto';
 import { ExceptionTitleList } from 'src/common/constants/exception-title-list.constants';

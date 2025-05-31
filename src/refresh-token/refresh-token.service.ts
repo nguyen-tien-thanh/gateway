@@ -12,7 +12,7 @@ import { StatusCodesList } from 'src/common/constants/status-codes-list.constant
 import { ForbiddenException } from 'src/exception/forbidden.exception';
 import { NotFoundException } from 'src/exception/not-found.exception';
 import { RefreshTokenInterface } from 'src/refresh-token/interface/refresh-token.interface';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { RefreshPaginateFilterDto } from 'src/refresh-token/dto/refresh-paginate-filter.dto';
 import { RefreshTokenSerializer } from 'src/refresh-token/serializer/refresh-token.serializer';
 import { Pagination } from 'src/paginate';

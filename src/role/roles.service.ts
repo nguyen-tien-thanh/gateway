@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client';
 import { NotFoundException } from 'src/exception/not-found.exception';
 import { CreateRoleDto } from 'src/role/dto/create-role.dto';
 import { UpdateRoleDto } from 'src/role/dto/update-role.dto';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { RoleFilterDto } from 'src/role/dto/role-filter.dto';
 import { Pagination } from 'src/paginate';
 import { RoleSerializer } from 'src/role/serializer/role.serializer';

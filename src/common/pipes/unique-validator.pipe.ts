@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ValidatorConstraint } from 'class-validator';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 import { AbstractUniqueValidator } from 'src/common/pipes/abstract-unique-validator';
 

@@ -17,6 +17,7 @@ services:
       - webnet
     depends_on:
       - postgres
+      - rabbitmq
 
   postgres:
     container_name: postgres
@@ -48,8 +49,30 @@ services:
     ports:
       - ${REDIS_PORT}:6379
 
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    container_name: rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+    ports:
+      - '5672:5672' # AMQP port
+      - '15672:15672' # Management UI port
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - webnet
+    healthcheck:
+      test: ['CMD', 'rabbitmqctl', 'status']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
 networks:
   webnet:
     driver: bridge
 volumes:
   pgdata:
+  rabbitmq_data:

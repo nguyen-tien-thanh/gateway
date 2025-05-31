@@ -2,7 +2,7 @@ import {
   ValidationArguments,
   ValidatorConstraintInterface
 } from 'class-validator';
-import { PrismaService } from 'src/database/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 /**
  * unique validation arguments

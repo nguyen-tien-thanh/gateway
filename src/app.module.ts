@@ -22,10 +22,11 @@ import { TwofaModule } from 'src/twofa/twofa.module';
 import { CustomThrottlerGuard } from 'src/common/guard/custom-throttle.guard';
 import { DashboardModule } from 'src/dashboard/dashboard.module';
 import { AppController } from 'src/app.controller';
-import { DatabaseModule } from 'src/database/database.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 import { CustomValidationPipe } from './common/pipes/custom-validation.pipe';
 import { I18nExceptionFilterPipe } from './common/pipes/i18n-exception-filter.pipe';
+import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 
 const appConfig = config.get('app');
 
@@ -34,7 +35,8 @@ const appConfig = config.get('app');
     ThrottlerModule.forRootAsync({
       useFactory: () => throttleConfig
     }),
-    DatabaseModule,
+    PrismaModule,
+    RabbitMQModule,
     I18nModule.forRootAsync({
       useFactory: () => ({
         fallbackLanguage: appConfig.fallbackLanguage,
