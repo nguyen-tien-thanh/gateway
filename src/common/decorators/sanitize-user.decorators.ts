@@ -1,4 +1,4 @@
-import { UserWithRole } from 'src/auth/models/user.model';
+import { UserWithRole } from 'src/modules/auth/models/user.model';
 
 /**
  * sanitize user fields

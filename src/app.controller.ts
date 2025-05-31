@@ -4,15 +4,11 @@ import { Controller, Get } from '@nestjs/common';
 export class AppController {
   @Get('/health')
   health() {
-    return {
-      status: 200
-    };
+    return { status: 200 };
   }
 
   @Get('')
   index() {
-    return {
-      message: 'hello world'
-    };
+    return 'Hello World!';
   }
 }

@@ -4,7 +4,7 @@ import {
   PermissionConfiguration,
   RoutePayloadInterface
 } from 'src/config/permission-config';
-import { UserWithRole } from 'src/auth/models/user.model';
+import { UserWithRole } from 'src/modules/auth/models/user.model';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {

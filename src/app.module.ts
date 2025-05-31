@@ -11,22 +11,22 @@ import {
   QueryResolver
 } from 'nestjs-i18n';
 
-import { AuthModule } from 'src/auth/auth.module';
-import { RolesModule } from 'src/role/roles.module';
-import { PermissionsModule } from 'src/permission/permissions.module';
+import { AuthModule } from 'src/modules/auth/auth.module';
+import { RolesModule } from 'src/modules/role/roles.module';
+import { PermissionsModule } from 'src/modules/permission/permissions.module';
 import * as throttleConfig from 'src/config/throttle-config';
-import { MailModule } from 'src/mail/mail.module';
-import { EmailTemplateModule } from 'src/email-template/email-template.module';
-import { RefreshTokenModule } from 'src/refresh-token/refresh-token.module';
-import { TwofaModule } from 'src/twofa/twofa.module';
+import { MailModule } from 'src/modules/mail/mail.module';
+import { EmailTemplateModule } from 'src/modules/email-template/email-template.module';
+import { RefreshTokenModule } from 'src/modules/refresh-token/refresh-token.module';
+import { TwofaModule } from 'src/modules/twofa/twofa.module';
 import { CustomThrottlerGuard } from 'src/common/guard/custom-throttle.guard';
-import { DashboardModule } from 'src/dashboard/dashboard.module';
+import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
 import { AppController } from 'src/app.controller';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaModule } from 'src/shared/prisma/prisma.module';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 import { CustomValidationPipe } from './common/pipes/custom-validation.pipe';
 import { I18nExceptionFilterPipe } from './common/pipes/i18n-exception-filter.pipe';
-import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
+import { RabbitMQModule } from './shared/rabbitmq/rabbitmq.module';
 
 const appConfig = config.get('app');
 
@@ -41,7 +41,7 @@ const appConfig = config.get('app');
       useFactory: () => ({
         fallbackLanguage: appConfig.fallbackLanguage,
         parserOptions: {
-          path: path.join(__dirname, '..', '/i18n/'),
+          path: path.join(__dirname, '..', 'shared', 'i18n'),
           watch: true
         }
       }),
