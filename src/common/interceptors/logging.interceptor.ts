@@ -43,11 +43,11 @@ export class LoggingInterceptor implements NestInterceptor {
       `\x1b[36m[START]\x1b[0m ${method} ${url} - ${controllerName}.${handlerName} - ${userInfo} - ${ip}`
     );
 
-    this.logger.debug(
-      `\x1b[34m[REQ]\x1b[0m UA: ${userAgent}, Type: ${
-        headers['content-type'] || 'none'
-      }, Length: ${headers['content-length'] || 'unknown'}`
-    );
+    // this.logger.debug(
+    //   `\x1b[34m[REQ]\x1b[0m UA: ${userAgent}, Type: ${
+    //     headers['content-type'] || 'none'
+    //   }, Length: ${headers['content-length'] || 'unknown'}`
+    // );
 
     return next.handle().pipe(
       tap((data) => {
@@ -73,13 +73,13 @@ export class LoggingInterceptor implements NestInterceptor {
           `\x1b[32m[OK]\x1b[0m ${method} ${url} - ${statusCode} - ${duration}ms - ${userInfo}`
         );
 
-        this.logger.debug(
-          `\x1b[35m[PERF]\x1b[0m ${duration}ms | Size: ${size} bytes | Heap: ${(
-            process.memoryUsage().heapUsed /
-            1024 /
-            1024
-          ).toFixed(2)}MB`
-        );
+        // this.logger.debug(
+        //   `\x1b[35m[PERF]\x1b[0m ${duration}ms | Size: ${size} bytes | Heap: ${(
+        //     process.memoryUsage().heapUsed /
+        //     1024 /
+        //     1024
+        //   ).toFixed(2)}MB`
+        // );
 
         if (duration > 1000) {
           const level = duration > 5000 ? '\x1b[31m[SLOW]' : '\x1b[33m[SLOW]';
