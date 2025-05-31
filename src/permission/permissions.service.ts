@@ -4,7 +4,7 @@ import { UpdatePermissionDto } from './dto/update-permission.dto';
 import { PermissionPaginateFilterDto } from './dto/permission-paginate-filter.dto';
 import { PermissionSerializer } from './serializer/permission.serializer';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Permission, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { Pagination } from 'src/paginate';
 
 @Injectable()

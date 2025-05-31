@@ -11,7 +11,7 @@ import {
   Query,
   UseGuards
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { PermissionsService } from 'src/permission/permissions.service';
 import { CreatePermissionDto } from 'src/permission/dto/create-permission.dto';

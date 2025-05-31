@@ -32,7 +32,6 @@ import { UpdateUserProfileDto } from 'src/auth/dto/update-user-profile.dto';
 import { UserLoginDto } from 'src/auth/dto/user-login.dto';
 import { UserSearchFilterDto } from 'src/auth/dto/user-search-filter.dto';
 import { UserSerializer } from 'src/auth/serializer/user.serializer';
-import { UserStatusEnum } from 'src/auth/user-status.enum';
 import { multerOptionsHelper } from 'src/common/helper/multer-options.helper';
 import { PermissionGuard } from 'src/common/guard/permission.guard';
 import JwtTwoFactorGuard from 'src/common/guard/jwt-two-factor.guard';

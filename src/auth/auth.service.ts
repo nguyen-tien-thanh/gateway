@@ -17,7 +17,6 @@ import {
 
 import { ExceptionTitleList } from 'src/common/constants/exception-title-list.constants';
 import { StatusCodesList } from 'src/common/constants/status-codes-list.constants';
-import { ForbiddenException } from 'src/exception/forbidden.exception';
 import { NotFoundException } from 'src/exception/not-found.exception';
 import { UnauthorizedException } from 'src/exception/unauthorized.exception';
 import { CustomHttpException } from 'src/exception/custom-http.exception';
@@ -32,13 +31,7 @@ import { ResetPasswordDto } from 'src/auth/dto/reset-password.dto';
 import { UserLoginDto } from 'src/auth/dto/user-login.dto';
 import { UserSearchFilterDto } from 'src/auth/dto/user-search-filter.dto';
 import { UserWithRole } from 'src/auth/models/user.model';
-import {
-  adminUserGroupsForSerializing,
-  defaultUserGroupsForSerializing,
-  ownerUserGroupsForSerializing,
-  UserSerializer
-} from 'src/auth/serializer/user.serializer';
-import { UserStatusEnum } from 'src/auth/user-status.enum';
+import { UserSerializer } from 'src/auth/serializer/user.serializer';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ValidationPayloadInterface } from 'src/common/interfaces/validation-error.interface';
 import { RefreshPaginateFilterDto } from 'src/refresh-token/dto/refresh-paginate-filter.dto';
@@ -793,7 +786,7 @@ export class AuthService {
       await this.sendMailToUser(
         userSerializer,
         '2FA Enabled',
-        '',
+        qrDataUri,
         'two-fa-enabled',
         '2FA'
       );

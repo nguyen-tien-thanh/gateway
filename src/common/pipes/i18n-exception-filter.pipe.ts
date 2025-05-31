@@ -4,7 +4,6 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
-  Inject,
   Logger
 } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
