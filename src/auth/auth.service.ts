@@ -39,7 +39,7 @@ import {
   UserSerializer
 } from 'src/auth/serializer/user.serializer';
 import { UserStatusEnum } from 'src/auth/user-status.enum';
-import { UserRepository } from 'src/auth/user.repository';
+import { PrismaService } from 'src/database/prisma.service';
 import { ValidationPayloadInterface } from 'src/common/interfaces/validation-error.interface';
 import { RefreshPaginateFilterDto } from 'src/refresh-token/dto/refresh-paginate-filter.dto';
 import { RefreshTokenSerializer } from 'src/refresh-token/serializer/refresh-token.serializer';
@@ -61,7 +61,7 @@ const BASE_OPTIONS: SignOptions = {
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userRepository: UserRepository,
+    private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly mailService: MailService,
     private readonly refreshTokenService: RefreshTokenService,
@@ -123,7 +123,7 @@ export class AuthService {
     createUserDto.token = token;
 
     const registerProcess = createUserDto.status === UserStatus.INACTIVE;
-    const user = await this.userRepository.create(createUserDto);
+    const user = await this.prisma.user.create({ data: createUserDto });
 
     // Convert to UserSerializer for email
     const userSerializer = this.transformUser(user);
@@ -145,11 +145,20 @@ export class AuthService {
     let user: UserWithRole | null = null;
 
     if (field === 'email') {
-      user = await this.userRepository.findByEmail(value);
+      user = await this.prisma.user.findUnique({
+        where: { email: value },
+        include: { role: true }
+      });
     } else if (field === 'username') {
-      user = await this.userRepository.findByUsername(value);
+      user = await this.prisma.user.findUnique({
+        where: { username: value },
+        include: { role: true }
+      });
     } else if (field === 'id') {
-      user = await this.userRepository.findById(parseInt(value));
+      user = await this.prisma.user.findUnique({
+        where: { id: parseInt(value) },
+        include: { role: true }
+      });
     }
 
     if (!user) {
@@ -192,7 +201,7 @@ export class AuthService {
     }
 
     // Find user by username or email
-    const users = await this.userRepository.findMany({
+    const users = await this.prisma.user.findMany({
       where: {
         OR: [
           { username: userLoginDto.username },
@@ -310,7 +319,8 @@ export class AuthService {
   ): Promise<string> {
     const opts: SignOptions = {
       ...BASE_OPTIONS,
-      subject: String(user.id)
+      subject: String(user.id),
+      expiresIn: jwtConfig.expiresIn
     };
     return this.jwt.signAsync({ isTwoFAAuthenticated }, opts);
   }
@@ -339,17 +349,21 @@ export class AuthService {
   }
 
   /**
-   * Get user By Id
+   * find user by id
    * @param id
    */
   async findById(id: number): Promise<UserSerializer> {
-    const user = await this.userRepository.findById(id);
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: { role: true }
+    });
     if (!user) {
       throw new NotFoundException(
         ExceptionTitleList.NotFound,
         StatusCodesList.NotFound
       );
     }
+
     return this.transformUser(user);
   }
 
@@ -367,14 +381,16 @@ export class AuthService {
     // Add search functionality if needed based on DTO structure
 
     const [users, total] = await Promise.all([
-      this.userRepository.findMany({
+      this.prisma.user.findMany({
         skip,
         take: limit,
         where,
-        include: { role: true },
+        include: {
+          role: true
+        },
         orderBy: { createdAt: 'desc' }
       }),
-      this.userRepository.count(where)
+      this.prisma.user.count({ where })
     ]);
 
     const serializedUsers = users.map((user) => this.transformUser(user));
@@ -398,7 +414,10 @@ export class AuthService {
     id: number,
     updateUserDto: Prisma.UserUpdateInput
   ): Promise<UserSerializer> {
-    const user = await this.userRepository.findById(id);
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: { role: true }
+    });
     if (!user) {
       throw new NotFoundException(
         ExceptionTitleList.NotFound,
@@ -406,39 +425,48 @@ export class AuthService {
       );
     }
 
-    // Check unique constraints if username or email is being updated
     if (updateUserDto.username || updateUserDto.email) {
-      const whereConditions = [];
+      const whereConditions: Array<any> = [];
+
       if (updateUserDto.username) {
-        whereConditions.push({ username: updateUserDto.username as string });
-      }
-      if (updateUserDto.email) {
-        whereConditions.push({ email: updateUserDto.email as string });
+        whereConditions.push({ username: updateUserDto.username });
       }
 
-      const existingUsers = await this.userRepository.findMany({
+      if (updateUserDto.email) {
+        whereConditions.push({ email: updateUserDto.email });
+      }
+
+      const existingUsers = await this.prisma.user.findMany({
         where: {
           OR: whereConditions,
-          NOT: { id }
+          NOT: {
+            id: id
+          }
         }
       });
 
       if (existingUsers.length > 0) {
         const errorPayload: ValidationPayloadInterface[] = [];
-        for (const existingUser of existingUsers) {
-          if (existingUser.username === updateUserDto.username) {
+        existingUsers.forEach((existingUser) => {
+          if (
+            updateUserDto.username &&
+            existingUser.username === updateUserDto.username
+          ) {
             errorPayload.push({
               property: 'username',
               constraints: { unique: 'already taken' }
             });
           }
-          if (existingUser.email === updateUserDto.email) {
+          if (
+            updateUserDto.email &&
+            existingUser.email === updateUserDto.email
+          ) {
             errorPayload.push({
               property: 'email',
               constraints: { unique: 'already taken' }
             });
           }
-        }
+        });
         throw new UnprocessableEntityException(errorPayload);
       }
     }
@@ -451,7 +479,7 @@ export class AuthService {
       }
     }
 
-    const updatedUser = await this.userRepository.update({
+    const updatedUser = await this.prisma.user.update({
       where: { id },
       data: updateUserDto
     });
@@ -460,28 +488,28 @@ export class AuthService {
   }
 
   /**
-   * activate newly register account
+   * account activate
    * @param token
    */
   async activateAccount(token: string): Promise<void> {
-    const users = await this.userRepository.findMany({
+    const users = await this.prisma.user.findMany({
       where: { token },
       take: 1
     });
 
-    const user = users[0];
-    if (!user) {
-      throw new NotFoundException();
+    if (users.length === 0) {
+      throw new UnprocessableEntityException('Token invalid');
     }
-    if (user.status !== UserStatus.INACTIVE) {
-      throw new ForbiddenException(
-        ExceptionTitleList.UserInactive,
-        StatusCodesList.UserInactive
-      );
+
+    const user = users[0];
+    const currentDateTime = new Date();
+
+    if (user.tokenValidityDate < currentDateTime) {
+      throw new UnprocessableEntityException('Token expired');
     }
 
     const newToken = await this.generateUniqueToken(6);
-    await this.userRepository.update({
+    await this.prisma.user.update({
       where: { id: user.id },
       data: {
         status: UserStatus.ACTIVE,
@@ -491,21 +519,26 @@ export class AuthService {
   }
 
   /**
-   * forget password and send reset code by email
+   * forget password
    * @param forgetPasswordDto
    */
   async forgotPassword(forgetPasswordDto: ForgetPasswordDto): Promise<void> {
     const { email } = forgetPasswordDto;
-    const user = await this.userRepository.findByEmail(email);
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      include: { role: true }
+    });
     if (!user) {
       return;
     }
 
-    const token = await this.generateUniqueToken(6);
+    const token = await this.generateUniqueToken(12);
+    const userSerializer = this.transformUser(user);
+
     const currentDateTime = new Date();
     currentDateTime.setHours(currentDateTime.getHours() + 1);
 
-    await this.userRepository.update({
+    await this.prisma.user.update({
       where: { id: user.id },
       data: {
         token,
@@ -513,52 +546,51 @@ export class AuthService {
       }
     });
 
-    const subject = 'Reset Password';
-    const userSerializer = this.transformUser(user);
     await this.sendMailToUser(
       userSerializer,
-      subject,
+      'Reset Password',
       `reset/${token}`,
       'reset-password',
-      subject
+      'Reset Password'
     );
   }
 
   /**
-   * reset password using token
+   * reset password
    * @param resetPasswordDto
    */
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
     const { password, token } = resetPasswordDto;
-    const users = await this.userRepository.findMany({
+    const users = await this.prisma.user.findMany({
       where: {
         token,
-        tokenValidityDate: { gt: new Date() }
+        tokenValidityDate: {
+          gte: new Date()
+        }
       },
       take: 1
     });
 
-    const user = users[0];
-    if (!user) {
-      throw new NotFoundException();
+    if (users.length === 0) {
+      throw new UnprocessableEntityException('Token invalid or expired');
     }
 
-    const newToken = await this.generateUniqueToken(6);
+    const user = users[0];
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    await this.userRepository.update({
+    await this.prisma.user.update({
       where: { id: user.id },
       data: {
-        token: newToken,
         password: hashedPassword,
-        salt
+        salt,
+        token: await this.generateUniqueToken(6)
       }
     });
   }
 
   /**
-   * change password of logged in user
+   * change password
    * @param user
    * @param changePasswordDto
    */
@@ -568,21 +600,19 @@ export class AuthService {
   ): Promise<void> {
     const { oldPassword, password } = changePasswordDto;
 
-    // Validate old password
-    const hashedOldPassword = await bcrypt.hash(oldPassword, user.salt);
-    if (hashedOldPassword !== user.password) {
-      throw new CustomHttpException(
-        ExceptionTitleList.IncorrectOldPassword,
-        HttpStatus.PRECONDITION_FAILED,
-        StatusCodesList.IncorrectOldPassword
+    const isValidOldPassword = await bcrypt.compare(oldPassword, user.password);
+
+    if (!isValidOldPassword) {
+      throw new UnauthorizedException(
+        ExceptionTitleList.Unauthorized,
+        StatusCodesList.UnauthorizedAccess
       );
     }
 
-    // Hash new password
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    await this.userRepository.update({
+    await this.prisma.user.update({
       where: { id: user.id },
       data: {
         password: hashedPassword,
@@ -634,12 +664,14 @@ export class AuthService {
   async generateUniqueToken(length: number): Promise<string> {
     let token: string;
     let tokenCount: number;
+
     do {
       token = this.generateRandomCode(length);
-      tokenCount = await this.userRepository.count({
-        token
+      tokenCount = await this.prisma.user.count({
+        where: { token }
       });
     } while (tokenCount > 0);
+
     return token;
   }
 
@@ -734,16 +766,13 @@ export class AuthService {
   }
 
   /**
-   * set two factor auth secret for user
-   * @param secret
-   * @param userId
+   * turn on/off two factor authentication
    **/
   async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
-    return this.userRepository.update({
+    return this.prisma.user.update({
       where: { id: userId },
       data: {
-        twoFASecret: secret,
-        twoFAThrottleTime: new Date()
+        twoFASecret: secret
       }
     });
   }
@@ -769,7 +798,7 @@ export class AuthService {
         '2FA'
       );
     }
-    return this.userRepository.update({
+    return this.prisma.user.update({
       where: { id: user.id },
       data: {
         isTwoFAEnabled
@@ -778,11 +807,10 @@ export class AuthService {
   }
 
   /**
-   * Count data by condition
-   * @param condition
+   * count user by condition
    **/
   async countByCondition(condition: Prisma.UserWhereInput) {
-    return this.userRepository.count(condition);
+    return this.prisma.user.count({ where: condition });
   }
 
   async getRefreshTokenGroupedData(field: string) {

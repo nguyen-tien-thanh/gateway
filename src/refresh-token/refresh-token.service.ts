@@ -12,7 +12,7 @@ import { StatusCodesList } from 'src/common/constants/status-codes-list.constant
 import { ForbiddenException } from 'src/exception/forbidden.exception';
 import { NotFoundException } from 'src/exception/not-found.exception';
 import { RefreshTokenInterface } from 'src/refresh-token/interface/refresh-token.interface';
-import { RefreshTokenRepository } from 'src/refresh-token/refresh-token.repository';
+import { PrismaService } from 'src/database/prisma.service';
 import { RefreshPaginateFilterDto } from 'src/refresh-token/dto/refresh-paginate-filter.dto';
 import { RefreshTokenSerializer } from 'src/refresh-token/serializer/refresh-token.serializer';
 import { Pagination } from 'src/paginate';
@@ -27,7 +27,7 @@ const BASE_OPTIONS: SignOptions = {
 @Injectable()
 export class RefreshTokenService {
   constructor(
-    private readonly repository: RefreshTokenRepository,
+    private readonly prisma: PrismaService,
     @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
     private readonly jwt: JwtService
@@ -78,7 +78,7 @@ export class RefreshTokenService {
       user: { connect: { id: user.id } }
     };
 
-    return this.repository.create(tokenData);
+    return this.prisma.refreshToken.create({ data: tokenData });
   }
 
   /**
@@ -200,7 +200,7 @@ export class RefreshTokenService {
       );
     }
 
-    return this.repository.findOne({ id: +tokenId });
+    return this.prisma.refreshToken.findUnique({ where: { id: +tokenId } });
   }
 
   /**
@@ -221,14 +221,14 @@ export class RefreshTokenService {
     };
 
     const [results, total] = await Promise.all([
-      this.repository.findMany({
+      this.prisma.refreshToken.findMany({
         skip,
         take: limit,
         where,
         orderBy: { id: 'desc' },
         include: { user: true }
       }),
-      this.repository.count(where)
+      this.prisma.refreshToken.count({ where })
     ]);
 
     const serializedResults = results.map((token) =>
@@ -273,7 +273,7 @@ export class RefreshTokenService {
     id: number,
     userId: number
   ): Promise<RefreshToken> {
-    const token = await this.repository.findOne({ id });
+    const token = await this.prisma.refreshToken.findUnique({ where: { id } });
     if (!token) {
       throw new NotFoundException('Refresh token not found');
     }
@@ -281,7 +281,7 @@ export class RefreshTokenService {
       throw new ForbiddenException('Not authorized to revoke this token');
     }
 
-    return this.repository.update({
+    return this.prisma.refreshToken.update({
       where: { id },
       data: { isRevoked: true }
     });
@@ -306,7 +306,7 @@ export class RefreshTokenService {
     const tokenId = payload.jwtid;
 
     if (tokenId) {
-      await this.repository.update({
+      await this.prisma.refreshToken.update({
         where: { id: +tokenId },
         data: { isRevoked: true }
       });

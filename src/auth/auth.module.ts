@@ -6,7 +6,7 @@ import * as config from 'config';
 
 import { AuthController } from 'src/auth/auth.controller';
 import { AuthService } from 'src/auth/auth.service';
-import { UserRepository } from 'src/auth/user.repository';
+import { DatabaseModule } from 'src/database/database.module';
 import { MailModule } from 'src/mail/mail.module';
 import { RateLimiterRedis } from 'rate-limiter-flexible';
 import { RefreshTokenModule } from 'src/refresh-token/refresh-token.module';
@@ -38,6 +38,7 @@ const LoginThrottleFactory = {
 
 @Module({
   imports: [
+    DatabaseModule,
     JwtModule.registerAsync({
       useFactory: () => ({
         secret: process.env.JWT_SECRET || jwtConfig.secret,
@@ -55,14 +56,12 @@ const LoginThrottleFactory = {
   controllers: [AuthController],
   providers: [
     AuthService,
-    UserRepository,
     JwtTwoFactorStrategy,
     JwtStrategy,
     LoginThrottleFactory
   ],
   exports: [
     AuthService,
-    UserRepository,
     JwtTwoFactorStrategy,
     JwtStrategy,
     PassportModule,

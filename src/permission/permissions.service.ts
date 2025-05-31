@@ -1,21 +1,18 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-
-import { CreatePermissionDto } from 'src/permission/dto/create-permission.dto';
-import { UpdatePermissionDto } from 'src/permission/dto/update-permission.dto';
-import { PermissionPaginateFilterDto } from 'src/permission/dto/permission-paginate-filter.dto';
-import { PermissionRepository } from 'src/permission/permission.repository';
-import { PermissionSerializer } from 'src/permission/serializer/permission.serializer';
+import { CreatePermissionDto } from './dto/create-permission.dto';
+import { UpdatePermissionDto } from './dto/update-permission.dto';
+import { PermissionPaginateFilterDto } from './dto/permission-paginate-filter.dto';
+import { PermissionSerializer } from './serializer/permission.serializer';
+import { PrismaService } from 'src/database/prisma.service';
+import { Permission, Prisma } from '@prisma/client';
 import { Pagination } from 'src/paginate';
-import { ValidationPayloadInterface } from 'src/common/interfaces/validation-error.interface';
 
 @Injectable()
 export class PermissionsService {
-  constructor(private readonly repository: PermissionRepository) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Get paginated permissions
-   * @param filter
    */
   async findAll(
     filter: PermissionPaginateFilterDto
@@ -33,13 +30,13 @@ export class PermissionsService {
     }
 
     const [permissions, total] = await Promise.all([
-      this.repository.findMany({
+      this.prisma.permission.findMany({
         skip,
         take: limit,
         where,
         orderBy: { createdAt: 'desc' }
       }),
-      this.repository.count(where)
+      this.prisma.permission.count({ where })
     ]);
 
     const serializedPermissions = permissions.map((permission) => ({
@@ -62,10 +59,11 @@ export class PermissionsService {
 
   /**
    * Find permission by name
-   * @param name
    */
   async findByName(name: string): Promise<PermissionSerializer | null> {
-    const permission = await this.repository.findByName(name);
+    const permission = await this.prisma.permission.findUnique({
+      where: { description: name }
+    });
     if (!permission) return null;
 
     return {
@@ -79,10 +77,12 @@ export class PermissionsService {
 
   /**
    * Get permission by id
-   * @param id
    */
   async findById(id: number): Promise<PermissionSerializer> {
-    const permission = await this.repository.findById(id);
+    const permission = await this.prisma.permission.findUnique({
+      where: { id }
+    });
+
     if (!permission) {
       throw new UnprocessableEntityException('Permission not found');
     }
@@ -98,31 +98,29 @@ export class PermissionsService {
 
   /**
    * Create new permission
-   * @param createPermissionDto
    */
   async create(
     createPermissionDto: CreatePermissionDto
   ): Promise<PermissionSerializer> {
     // Check if permission with same name exists
-    const existingPermission = await this.repository.findByName(
-      createPermissionDto.name
-    );
+    const existingPermission = await this.prisma.permission.findUnique({
+      where: { description: createPermissionDto.name }
+    });
+
     if (existingPermission) {
-      const errorPayload: ValidationPayloadInterface[] = [
-        {
-          property: 'name',
-          constraints: { unique: 'already taken' }
-        }
-      ];
-      throw new UnprocessableEntityException(errorPayload);
+      throw new UnprocessableEntityException(
+        `Permission with name '${createPermissionDto.name}' already exists`
+      );
     }
 
-    const permission = await this.repository.create({
-      resource: 'general',
-      description: createPermissionDto.name,
-      path: '/unknown',
-      method: 'GET',
-      isDefault: false
+    const permission = await this.prisma.permission.create({
+      data: {
+        resource: 'general',
+        description: createPermissionDto.name,
+        path: '/unknown',
+        method: 'GET',
+        isDefault: false
+      }
     });
 
     return {
@@ -136,35 +134,32 @@ export class PermissionsService {
 
   /**
    * Update permission
-   * @param id
-   * @param updatePermissionDto
    */
   async update(
     id: number,
     updatePermissionDto: UpdatePermissionDto
   ): Promise<PermissionSerializer> {
-    const permission = await this.repository.findById(id);
+    const permission = await this.prisma.permission.findUnique({
+      where: { id }
+    });
+
     if (!permission) {
       throw new UnprocessableEntityException('Permission not found');
     }
 
     // Check if name is unique (excluding current permission)
     if (updatePermissionDto.name) {
-      const existingPermission = await this.repository.findMany({
+      const existingPermission = await this.prisma.permission.findFirst({
         where: {
           description: updatePermissionDto.name,
           NOT: { id }
         }
       });
 
-      if (existingPermission.length > 0) {
-        const errorPayload: ValidationPayloadInterface[] = [
-          {
-            property: 'name',
-            constraints: { unique: 'already taken' }
-          }
-        ];
-        throw new UnprocessableEntityException(errorPayload);
+      if (existingPermission) {
+        throw new UnprocessableEntityException(
+          `Permission with name '${updatePermissionDto.name}' already exists`
+        );
       }
     }
 
@@ -172,11 +167,8 @@ export class PermissionsService {
     if (updatePermissionDto.name) {
       updateData.description = updatePermissionDto.name;
     }
-    if (updatePermissionDto.description) {
-      updateData.description = updatePermissionDto.description;
-    }
 
-    const updatedPermission = await this.repository.update({
+    const updatedPermission = await this.prisma.permission.update({
       where: { id },
       data: updateData
     });
@@ -192,22 +184,24 @@ export class PermissionsService {
 
   /**
    * Delete permission
-   * @param id
    */
   async remove(id: number): Promise<void> {
-    const permission = await this.repository.findById(id);
+    const permission = await this.prisma.permission.findUnique({
+      where: { id }
+    });
+
     if (!permission) {
       throw new UnprocessableEntityException('Permission not found');
     }
 
-    await this.repository.delete(id);
+    await this.prisma.permission.delete({ where: { id } });
   }
 
   /**
    * Get permissions for role assignment
    */
   async getPermissionForRoleAssignment(): Promise<PermissionSerializer[]> {
-    const permissions = await this.repository.findMany({
+    const permissions = await this.prisma.permission.findMany({
       orderBy: { description: 'asc' }
     });
 
