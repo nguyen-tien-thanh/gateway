@@ -51,17 +51,15 @@ export class PermissionGuard implements CanActivate {
     permissionAgainst: RoutePayloadInterface
   ) {
     const { path, method } = permissionAgainst;
-    // For now, return true to allow access since we need to implement
-    // the proper permission checking with the new Prisma schema
-    // TODO: Implement proper permission checking with RolePermission junction table
-    if (user && user.role) {
-      // Allow admin users to access everything
-      if (user.role.name === 'admin') {
-        return true;
-      }
-      // TODO: Check permissions from the RolePermission table
-      return true; // Temporary - allow all authenticated users
-    }
-    return false;
+
+    if (!user || !user.role) return false;
+
+    if (user.role.name === 'admin') return true;
+
+    const hasPermission = user.role.permissions?.some((permission) => {
+      return permission.path === path && permission.method === method;
+    });
+
+    return hasPermission || false;
   }
 }

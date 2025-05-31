@@ -1,10 +1,18 @@
-import { User as PrismaUser, Role as PrismaRole } from '@prisma/client';
+import {
+  User as PrismaUser,
+  Role as PrismaRole,
+  Permission as PrismaPermission
+} from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
 import { UserStatusEnum } from '../user-status.enum';
 
+export interface RoleWithPermissions extends PrismaRole {
+  permissions?: PrismaPermission[];
+}
+
 export interface UserWithRole extends PrismaUser {
-  role?: PrismaRole;
+  role?: RoleWithPermissions;
 }
 
 export class UserModel implements PrismaUser {
