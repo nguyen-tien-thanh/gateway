@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { APP_FILTER, APP_GUARD, APP_PIPE, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import * as path from 'path';
 import * as config from 'config';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 import {
   CookieResolver,
   HeaderResolver,
@@ -26,6 +24,8 @@ import { DashboardModule } from 'src/dashboard/dashboard.module';
 import { AppController } from 'src/app.controller';
 import { DatabaseModule } from 'src/database/database.module';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
+import { CustomValidationPipe } from './common/pipes/custom-validation.pipe';
+import { I18nExceptionFilterPipe } from './common/pipes/i18n-exception-filter.pipe';
 
 const appConfig = config.get('app');
 
@@ -53,25 +53,20 @@ const appConfig = config.get('app');
         new CookieResolver(['lang', 'locale', 'l'])
       ]
     }),
-    // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, '..', 'public'),
-    //   exclude: ['/api*']
-    // }),
     AuthModule,
     RolesModule,
     PermissionsModule,
     MailModule,
-    EmailTemplateModule, // ✅ Migrated to Prisma
-    RefreshTokenModule, // ✅ Migrated to Prisma
+    EmailTemplateModule,
+    RefreshTokenModule,
     TwofaModule,
     DashboardModule
   ],
   providers: [
-    // TODO: Re-implement validation pipe for Prisma
-    // {
-    //   provide: APP_PIPE,
-    //   useClass: CustomValidationPipe
-    // },
+    {
+      provide: APP_PIPE,
+      useClass: CustomValidationPipe
+    },
     {
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard
@@ -79,12 +74,11 @@ const appConfig = config.get('app');
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor
+    },
+    {
+      provide: APP_FILTER,
+      useClass: I18nExceptionFilterPipe
     }
-    // TODO: Re-implement i18n exception filter
-    // {
-    //   provide: APP_FILTER,
-    //   useClass: I18nExceptionFilterPipe
-    // }
   ],
   controllers: [AppController]
 })
