@@ -16,25 +16,25 @@ services:
     networks:
       - webnet
     depends_on:
-      - postgres
+      - mysql
       - rabbitmq
 
-  postgres:
-    container_name: postgres
-    image: postgres:12
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
     env_file:
       - .env
     networks:
       - webnet
     environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_DB: ${DB_DATABASE_NAME}
-      PG_DATA: /var/lib/postgresql/data
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_DATABASE: ${DB_DATABASE_NAME}
+      MYSQL_DATA: /var/lib/mysql
     ports:
-      - ${DB_PORT}:5432
+      - ${DB_PORT}:3306
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
 
   redis:
     image: 'redis:alpine'
@@ -74,5 +74,5 @@ networks:
   webnet:
     driver: bridge
 volumes:
-  pgdata:
+  mysql_data:
   rabbitmq_data:
