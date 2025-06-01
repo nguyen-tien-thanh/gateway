@@ -3,36 +3,42 @@ import {
   Logger,
   RequestTimeoutException,
   OnModuleInit,
-  OnModuleDestroy
+  OnModuleDestroy,
+  Inject,
+  Optional
 } from '@nestjs/common';
 import {
   ClientProxy,
   ClientProxyFactory,
   Transport
 } from '@nestjs/microservices';
+import { REQUEST } from '@nestjs/core';
 import { firstValueFrom, timeout } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
-export interface GatewayRequest {
-  service: string;
-  operation: string;
+export interface RMQRequest {
+  pattern: string;
   data?: any;
   correlationId?: string;
   timestamp?: Date;
   source?: string;
+  user?: {
+    id: number;
+    username: string;
+    email: string;
+  };
 }
 
-export interface GatewayResponse {
+export interface RMQResponse {
   success: boolean;
+  count?: number;
   data?: any;
   error?: string;
-  correlationId: string;
-  processingTime: number;
 }
 
 @Injectable()
 export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
-  private readonly logger = new Logger(RabbitMQService.name);
+  private readonly logger = new Logger('RabbitMQ');
   private client: ClientProxy;
 
   private readonly config = {
@@ -42,7 +48,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     source: process.env.APP_NAME || 'gateway'
   };
 
-  constructor() {
+  constructor(@Optional() @Inject(REQUEST) private readonly request?: any) {
     this.client = ClientProxyFactory.create({
       transport: Transport.RMQ,
       options: {
@@ -71,84 +77,135 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private enrichRequest(request: GatewayRequest): GatewayRequest {
+  private getCurrentUser():
+    | { id: number; username: string; email: string }
+    | undefined {
+    try {
+      if (this.request?.user) {
+        const user = this.request.user;
+        if (user.id && user.username && user.email) {
+          return {
+            id: user.id,
+            username: user.username,
+            email: user.email
+          };
+        }
+      }
+    } catch (error) {
+      // Ignore errors when getting user context
+    }
+    return undefined;
+  }
+
+  private enrichRequest(
+    request: RMQRequest,
+    user?: { id: number; username: string; email: string }
+  ): RMQRequest {
+    const currentUser = user || request.user || this.getCurrentUser();
+
     return {
       ...request,
       correlationId: request.correlationId || uuidv4(),
       timestamp: new Date(),
-      source: this.config.source
+      source: this.config.source,
+      user: currentUser
     };
   }
 
-  private getPattern(service: string, operation: string): string {
-    return `${service}.${operation}`;
-  }
-
-  async sendRequest(request: GatewayRequest): Promise<GatewayResponse> {
-    const enriched = this.enrichRequest(request);
-    const pattern = this.getPattern(request.service, request.operation);
+  async sendRequest(
+    request: RMQRequest,
+    user?: { id: number; username: string; email: string }
+  ): Promise<RMQResponse> {
+    const enriched = this.enrichRequest(request, user);
     const startTime = Date.now();
 
     try {
+      const userContext = enriched.user
+        ? ` [User: ${enriched.user.username}(${enriched.user.id})]`
+        : '';
       this.logger.log(
-        `Sending request to ${pattern} [${enriched.correlationId}]`
+        `Sending request to ${enriched.pattern} [${enriched.correlationId}]${userContext}`
       );
 
       const response = await firstValueFrom(
-        this.client.send(pattern, enriched).pipe(timeout(this.config.timeout))
+        this.client
+          .send(enriched.pattern, enriched.data)
+          .pipe(timeout(this.config.timeout))
       );
 
       const processingTime = Date.now() - startTime;
       this.logger.log(
-        `Response from ${pattern} [${enriched.correlationId}] in ${processingTime}ms`
+        `Response from ${enriched.pattern} [${enriched.correlationId}] in ${processingTime}ms${userContext}`
       );
+
+      if (response.count) {
+        return {
+          success: true,
+          count: response.count,
+          data: response.data
+        };
+      }
 
       return {
         success: true,
-        data: response,
-        correlationId: enriched.correlationId,
-        processingTime
+        data: response
       };
     } catch (error) {
       const processingTime = Date.now() - startTime;
+      const userContext = enriched.user
+        ? ` [User: ${enriched.user.username}(${enriched.user.id})]`
+        : '';
       this.logger.error(
-        `Request failed ${pattern} [${enriched.correlationId}] after ${processingTime}ms`,
+        `Request failed ${enriched.pattern} [${enriched.correlationId}] after ${processingTime}ms${userContext}`,
         error
       );
 
       if (error.name === 'TimeoutError') {
-        throw new RequestTimeoutException(`Request timeout for ${pattern}`);
+        throw new RequestTimeoutException(
+          `Request timeout for ${enriched.pattern}`
+        );
       }
 
       return {
         success: false,
-        error: error.message || 'Unknown error',
-        correlationId: enriched.correlationId,
-        processingTime
+        error: error.message || 'Unknown error'
       };
     }
   }
 
-  async sendEvent(request: GatewayRequest): Promise<void> {
-    const enriched = this.enrichRequest(request);
-    const pattern = this.getPattern(request.service, request.operation);
+  async sendEvent(
+    request: RMQRequest,
+    user?: { id: number; username: string; email: string }
+  ): Promise<void> {
+    const enriched = this.enrichRequest(request, user);
 
     try {
+      const userContext = enriched.user
+        ? ` [User: ${enriched.user.username}(${enriched.user.id})]`
+        : '';
       this.logger.log(
-        `Sending event to ${pattern} [${enriched.correlationId}]`
+        `Sending event to ${enriched.pattern} [${enriched.correlationId}]${userContext}`
       );
-      this.client.emit(pattern, enriched);
-      this.logger.log(`Event sent to ${pattern} [${enriched.correlationId}]`);
+      this.client.emit(enriched.pattern, enriched.data);
+      this.logger.log(
+        `Event sent to ${enriched.pattern} [${enriched.correlationId}]${userContext}`
+      );
     } catch (error) {
+      const userContext = enriched.user
+        ? ` [User: ${enriched.user.username}(${enriched.user.id})]`
+        : '';
       this.logger.error(
-        `Failed to send event to ${pattern} [${enriched.correlationId}]`,
+        `Failed to send event to ${enriched.pattern} [${enriched.correlationId}]${userContext}`,
         error
       );
       throw error;
     }
   }
 
-  async healthCheck(service: string): Promise<GatewayResponse> {
-    return this.sendRequest({ service, operation: 'health' });
+  async healthCheck(
+    pattern: string,
+    user?: { id: number; username: string; email: string }
+  ): Promise<RMQResponse> {
+    return this.sendRequest({ pattern }, user);
   }
 }

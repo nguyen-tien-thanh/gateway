@@ -27,6 +27,7 @@ import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor'
 import { CustomValidationPipe } from './common/pipes/custom-validation.pipe';
 import { I18nExceptionFilterPipe } from './common/pipes/i18n-exception-filter.pipe';
 import { RabbitMQModule } from './shared/rabbitmq/rabbitmq.module';
+import { HouseModule } from './modules/house/house.module';
 
 const appConfig = config.get('app');
 
@@ -62,7 +63,8 @@ const appConfig = config.get('app');
     EmailTemplateModule,
     RefreshTokenModule,
     TwofaModule,
-    DashboardModule
+    DashboardModule,
+    HouseModule
   ],
   providers: [
     {
