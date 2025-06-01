@@ -23,9 +23,9 @@ export class PermissionsService {
     const where: Prisma.PermissionWhereInput = {};
     if (search) {
       where.OR = [
-        { resource: { contains: search, mode: 'insensitive' } },
-        { description: { contains: search, mode: 'insensitive' } },
-        { path: { contains: search, mode: 'insensitive' } }
+        { resource: { contains: search } },
+        { description: { contains: search } },
+        { path: { contains: search } }
       ];
     }
 

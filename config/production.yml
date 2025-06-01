@@ -4,10 +4,10 @@ server:
 
 db:
   host: 'localhost'
-  type: 'postgres'
-  port: 5432
-  username: 'postgres'
-  password: 'postgres'
+  type: 'mysql'
+  port: 3306
+  username: 'root'
+  password: 'mysql'
   database: 'agb'
   synchronize: false
 

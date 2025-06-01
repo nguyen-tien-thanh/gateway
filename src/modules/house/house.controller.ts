@@ -5,39 +5,55 @@ import {
   Body,
   Patch,
   Param,
-  Delete
+  Delete,
+  UseGuards
 } from '@nestjs/common';
 import { HouseService } from './house.service';
-import { CreateHouseDto } from './dto/create-house.dto';
-import { UpdateHouseDto } from './dto/update-house.dto';
+import { CreateHouseDto, HouseDto, UpdateHouseDto } from './house.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { IFilter, Filter } from 'src/common/decorators/filter.decorator';
+import JwtTwoFactorGuard from 'src/common/guard/jwt-two-factor.guard';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
+import { UserWithRole } from '../auth/models/user.model';
+import { PermissionGuard } from 'src/common/guard/permission.guard';
 
 @ApiTags('house')
 @Controller('house')
 export class HouseController {
   constructor(private readonly houseService: HouseService) {}
 
+  @UseGuards(JwtTwoFactorGuard, PermissionGuard)
   @Post()
-  create(@Body() createHouseDto: CreateHouseDto) {
-    return this.houseService.create(createHouseDto);
+  create(@Body() createHouseDto: HouseDto, @GetUser() user: UserWithRole) {
+    return this.houseService.create({ ...createHouseDto, createdBy: user.id });
   }
 
+  @UseGuards(JwtTwoFactorGuard, PermissionGuard)
   @Get()
   findAll(@Filter() filter?: IFilter) {
     return this.houseService.findAll(filter);
   }
 
+  @UseGuards(JwtTwoFactorGuard, PermissionGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.houseService.findOne(+id);
   }
 
+  @UseGuards(JwtTwoFactorGuard, PermissionGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHouseDto: UpdateHouseDto) {
-    return this.houseService.update(+id, updateHouseDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateHouseDto: HouseDto,
+    @GetUser() user: UserWithRole
+  ) {
+    return this.houseService.update(+id, {
+      ...updateHouseDto,
+      updatedBy: user.id
+    });
   }
 
+  @UseGuards(JwtTwoFactorGuard, PermissionGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.houseService.remove(+id);

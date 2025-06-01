@@ -71,7 +71,7 @@ CREATE TABLE `refresh_token` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userId` INTEGER NOT NULL,
     `ip` VARCHAR(191) NOT NULL,
-    `userAgent` VARCHAR(191) NOT NULL,
+    `userAgent` TEXT NOT NULL,
     `browser` VARCHAR(191) NULL,
     `os` VARCHAR(191) NULL,
     `isRevoked` BOOLEAN NOT NULL,

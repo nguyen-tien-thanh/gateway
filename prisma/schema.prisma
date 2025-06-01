@@ -89,7 +89,7 @@ model RefreshToken {
   id        Int      @id @default(autoincrement())
   userId    Int
   ip        String
-  userAgent String
+  userAgent String   @db.Text
   browser   String?
   os        String?
   isRevoked Boolean

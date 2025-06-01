@@ -129,7 +129,10 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 
       const response = await firstValueFrom(
         this.client
-          .send(enriched.pattern, enriched.data)
+          .send(enriched.pattern, {
+            ...enriched.data,
+            user: enriched.user
+          })
           .pipe(timeout(this.config.timeout))
       );
 

@@ -71,8 +71,8 @@ export class RolesService {
     const where: Prisma.RoleWhereInput = {};
     if (keywords) {
       where.OR = [
-        { name: { contains: keywords, mode: 'insensitive' } },
-        { description: { contains: keywords, mode: 'insensitive' } }
+        { name: { contains: keywords } },
+        { description: { contains: keywords } }
       ];
     }
 

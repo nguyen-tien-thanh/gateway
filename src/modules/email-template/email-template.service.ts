@@ -112,10 +112,10 @@ export class EmailTemplateService {
     const where: Prisma.EmailTemplateWhereInput = {};
     if (keywords) {
       where.OR = [
-        { title: { contains: keywords, mode: 'insensitive' } },
-        { subject: { contains: keywords, mode: 'insensitive' } },
-        { body: { contains: keywords, mode: 'insensitive' } },
-        { sender: { contains: keywords, mode: 'insensitive' } }
+        { title: { contains: keywords } },
+        { subject: { contains: keywords } },
+        { body: { contains: keywords } },
+        { sender: { contains: keywords } }
       ];
     }
 

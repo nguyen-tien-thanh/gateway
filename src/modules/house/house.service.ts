@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateHouseDto } from './dto/create-house.dto';
-import { UpdateHouseDto } from './dto/update-house.dto';
+import { CreateHouseDto, UpdateHouseDto } from './house.dto';
 import {
   RabbitMQService,
   RMQRequest

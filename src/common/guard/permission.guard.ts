@@ -52,14 +52,18 @@ export class PermissionGuard implements CanActivate {
   ) {
     const { path, method } = permissionAgainst;
 
-    if (!user || !user.role) return false;
+    if (!user?.role) return false;
 
     if (user.role.name === 'admin') return true;
 
-    const hasPermission = user.role.permissions?.some((permission) => {
-      return permission.path === path && permission.method === method;
-    });
-
-    return hasPermission || false;
+    return (
+      user.role.permissions?.some((permission) => {
+        const methodMatch =
+          permission.method.toLowerCase() === method.toLowerCase();
+        const pathMatch =
+          permission.path === path || path.startsWith(permission.path);
+        return methodMatch && pathMatch;
+      }) ?? false
+    );
   }
 }

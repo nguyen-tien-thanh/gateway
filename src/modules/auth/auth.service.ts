@@ -201,7 +201,9 @@ export class AuthService {
           { email: userLoginDto.username }
         ]
       },
-      include: { role: true },
+      include: {
+        role: { include: { permissions: { include: { permission: true } } } }
+      },
       take: 1
     });
 
@@ -295,7 +297,7 @@ export class AuthService {
               description: user.role.description,
               createdAt: user.role.createdAt,
               updatedAt: user.role.updatedAt,
-              permission: [] // Will be populated when needed
+              permission: user.role.permissions
             }
           : undefined
     };

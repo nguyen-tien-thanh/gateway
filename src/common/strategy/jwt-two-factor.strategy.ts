@@ -28,17 +28,27 @@ export class JwtTwoFactorStrategy extends PassportStrategy(
     const { sub: id, isTwoFAAuthenticated } = payload;
     const user = await this.prisma.user.findUnique({
       where: { id: Number(id) },
-      include: { role: true }
+      include: {
+        role: { include: { permissions: { include: { permission: true } } } }
+      }
     });
 
-    if (!user) {
-      throw new UnauthorizedException();
-    }
+    if (!user) throw new UnauthorizedException();
 
     if (user.isTwoFAEnabled && !isTwoFAAuthenticated) {
       throw new UnauthorizedException();
     }
 
-    return user;
+    const userWithRole: UserWithRole = {
+      ...user,
+      role: user.role
+        ? {
+            ...user.role,
+            permissions: user.role.permissions.map((rp) => rp.permission)
+          }
+        : undefined
+    };
+
+    return userWithRole;
   }
 }
