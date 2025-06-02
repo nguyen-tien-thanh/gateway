@@ -1,0 +1,20 @@
+{
+  "internalError": "Lỗi máy chủ nội bộ!",
+  "Unauthorized": "Chưa được xác thực",
+  "otpRequired": "Yêu cầu mã OTP",
+  "invalidOTP": "Mã OTP không hợp lệ",
+  "inactiveUser": "Tài khoản của bạn chưa được kích hoạt!",
+  "invalidCredentials": "Thông tin đăng nhập không đúng!",
+  "Forbidden": "Truy cập vào tài nguyên được yêu cầu bị cấm!",
+  "userInactive": "Người dùng không hoạt động, vui lòng liên hệ quản trị viên để được hỗ trợ thêm!",
+  "Not Found": "Không tìm thấy dữ liệu!",
+  "tokenExpired": "Phiên của bạn đã hết hạn!",
+  "unsupportedFileType": "Loại tệp tải lên không được hỗ trợ!",
+  "incorrectOldPassword": "Mật khẩu cũ không đúng!",
+  "badRequest": "Yêu cầu sai, đã có lỗi xảy ra vui lòng thử lại sau!",
+  "tooManyRequest": "Quá nhiều lần thử, thử lại sau {second} $t(exception.sec, {{\"count\": {second} }})!",
+  "invalidRefreshToken": "Mã refresh token không hợp lệ!",
+  "deleteDefaultError": "Không thể xóa mục mặc định!",
+  "refreshTokenExpired": "Mã refresh token đã hết hạn!",
+  "tooManyTries": "Quá nhiều lần thử!"
+}

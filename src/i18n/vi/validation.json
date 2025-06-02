@@ -1,0 +1,24 @@
+{
+  "character": {
+    "one": "ký tự",
+    "other": "ký tự",
+    "zero": "ký tự"
+  },
+  "isNotEmpty": "$t(app.{property}) không được để trống",
+  "maxLength": "$t(app.{property}) chỉ có thể có độ dài tối đa {ln} $t(validation.character, {{\"count\": {count} }})",
+  "minLength": "$t(app.{property}) phải có độ dài tối thiểu {ln} $t(validation.character, {{\"count\": {count} }})",
+  "max": "$t(app.{property}) có thể nhỏ hơn hoặc bằng {ln}",
+  "min": "$t(app.{property}) phải lớn hơn hoặc bằng {ln}",
+  "password should contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character": "mật khẩu phải chứa ít nhất một chữ thường, một chữ hoa, một chữ số và một ký tự đặc biệt",
+  "isIn": "$t(app.{property}) phải là một trong {items}",
+  "isEnum": "$t(app.{property}) phải là một trong {items}",
+  "isNumberString": "$t(app.{property}) phải là số",
+  "isNumber": "$t(app.{property}) phải là số",
+  "isEqualTo": "$t(app.{property}) phải giống với $t(app.{field})",
+  "isLowercase": "$t(app.{property}) phải viết thường",
+  "isEmail": "$t(app.{property}) phải là email hợp lệ",
+  "isString": "$t(app.{property}) phải là chuỗi",
+  "isBoolean": "trường phải được chọn giữa đúng hoặc sai",
+  "already taken": "$t(app.{property}) đã được sử dụng",
+  "unique": "$t(app.{property}) đã được sử dụng"
+}

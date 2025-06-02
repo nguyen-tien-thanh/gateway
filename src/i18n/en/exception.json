@@ -1,0 +1,20 @@
+{
+  "internalError": "Internal server error!",
+  "Unauthorized": "Unauthorized",
+  "otpRequired": "OTP is required",
+  "invalidOTP": "Invalid OTP",
+  "inactiveUser": "Your account is not activated!",
+  "invalidCredentials": "Invalid credentials!",
+  "Forbidden": "Access to the requested resource is forbidden!",
+  "userInactive": "User is inactive, please contact administrator for further assistance!",
+  "Not Found": "Data not found!",
+  "tokenExpired": "Your session has expired!",
+  "unsupportedFileType": "Uploaded file type is not supported!",
+  "incorrectOldPassword": "Incorrect old password!",
+  "badRequest": "Bad request, an error occurred please try again later!",
+  "tooManyRequest": "Too many attempts, try again after {second} $t(exception.sec, {{\"count\": {second} }})!",
+  "invalidRefreshToken": "Invalid refresh token!",
+  "deleteDefaultError": "Cannot delete default item!",
+  "refreshTokenExpired": "Refresh token has expired!",
+  "tooManyTries": "Too many attempts!"
+}

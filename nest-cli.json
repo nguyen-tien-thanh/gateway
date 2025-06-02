@@ -4,9 +4,8 @@
   "compilerOptions": {
     "plugins": ["@nestjs/swagger"],
     "assets": [
-      { "include": "shared/i18n/**/*", "watchAssets": true },
-      { "include": "modules/mail/templates/**/*", "watchAssets": true },
-      { "include": "**/*.css", "watchAssets": true }
+      { "include": "i18n/**/*", "watchAssets": true },
+      { "include": "modules/mail/templates/**/*", "watchAssets": true }
     ]
   },
   "plugins": [
