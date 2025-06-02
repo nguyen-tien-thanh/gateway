@@ -117,7 +117,8 @@ export class I18nExceptionFilterPipe implements ExceptionFilter {
         'matches',
         'maxLength',
         'minLength',
-        'isLength'
+        'isLength',
+        'isPositive'
       ];
       const item = errors[i];
       let message = [];
@@ -126,12 +127,15 @@ export class I18nExceptionFilterPipe implements ExceptionFilter {
           Object.keys(item.constraints).map(async (key: string) => {
             let validationKey: string = key,
               validationArgument: Record<string, any> = {};
+            // TODO: handle key
             if (constraintsValidator.includes(key)) {
               const { title, argument } = this.checkIfConstraintAvailable(
                 item.constraints[key]
               );
               validationKey = title;
               validationArgument = argument;
+            } else if (!constraintsValidator.includes(key)) {
+              validationKey = item.constraints[key];
             }
             const args: Record<string, any> = {
               lang,

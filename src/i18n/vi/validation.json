@@ -14,6 +14,7 @@
   "isEnum": "$t(app.{property}) phải là một trong {items}",
   "isNumberString": "$t(app.{property}) phải là số",
   "isNumber": "$t(app.{property}) phải là số",
+  "isPositive": "$t(app.{property}) phải là số dương",
   "isEqualTo": "$t(app.{property}) phải giống với $t(app.{field})",
   "isLowercase": "$t(app.{property}) phải viết thường",
   "isEmail": "$t(app.{property}) phải là email hợp lệ",
