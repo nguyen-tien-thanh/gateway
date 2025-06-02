@@ -9,7 +9,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { HouseService } from './house.service';
-import { CreateHouseDto, HouseDto, UpdateHouseDto } from './house.dto';
+import { HouseDto } from './house.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { IFilter, Filter } from 'src/common/decorators/filter.decorator';
 import JwtTwoFactorGuard from 'src/common/guard/jwt-two-factor.guard';
@@ -22,7 +22,7 @@ import { PermissionGuard } from 'src/common/guard/permission.guard';
 export class HouseController {
   constructor(private readonly houseService: HouseService) {}
 
-  @UseGuards(JwtTwoFactorGuard, PermissionGuard)
+  @UseGuards(JwtTwoFactorGuard)
   @Post()
   create(@Body() createHouseDto: HouseDto, @GetUser() user: UserWithRole) {
     return this.houseService.create({ ...createHouseDto, createdBy: user.id });

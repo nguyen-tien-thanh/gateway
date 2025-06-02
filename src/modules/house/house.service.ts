@@ -13,7 +13,7 @@ export class HouseService {
   async create(createHouseDto: CreateHouseDto) {
     const request: RMQRequest = {
       pattern: 'house.create',
-      data: createHouseDto
+      payload: createHouseDto
     };
     return await this.rabbitMQService.sendRequest(request);
   }
@@ -21,7 +21,7 @@ export class HouseService {
   async findAll(filter?: IFilter) {
     const request: RMQRequest = {
       pattern: 'house.findAll',
-      data: { filter }
+      filter
     };
     return await this.rabbitMQService.sendRequest(request);
   }
@@ -29,7 +29,7 @@ export class HouseService {
   async findOne(id: number) {
     const request: RMQRequest = {
       pattern: 'house.findOne',
-      data: { id }
+      id
     };
     return await this.rabbitMQService.sendRequest(request);
   }
@@ -37,10 +37,8 @@ export class HouseService {
   async update(id: number, updateHouseDto: UpdateHouseDto) {
     const request: RMQRequest = {
       pattern: 'house.update',
-      data: {
-        id,
-        ...updateHouseDto
-      }
+      id,
+      payload: updateHouseDto
     };
     return await this.rabbitMQService.sendRequest(request);
   }
@@ -48,7 +46,7 @@ export class HouseService {
   async remove(id: number) {
     const request: RMQRequest = {
       pattern: 'house.remove',
-      data: { id }
+      id
     };
     return await this.rabbitMQService.sendRequest(request);
   }

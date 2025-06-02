@@ -5,7 +5,8 @@ import {
   OnModuleInit,
   OnModuleDestroy,
   Inject,
-  Optional
+  Optional,
+  HttpException
 } from '@nestjs/common';
 import {
   ClientProxy,
@@ -18,7 +19,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 export interface RMQRequest {
   pattern: string;
-  data?: any;
+  filter?: any;
+  payload?: any;
+  id?: number;
   correlationId?: string;
   timestamp?: Date;
   source?: string;
@@ -34,6 +37,8 @@ export interface RMQResponse {
   count?: number;
   data?: any;
   error?: string;
+  statusCode?: number;
+  message?: string;
 }
 
 @Injectable()
@@ -130,7 +135,9 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
       const response = await firstValueFrom(
         this.client
           .send(enriched.pattern, {
-            ...enriched.data,
+            filter: enriched.filter,
+            id: enriched.id,
+            payload: enriched.payload,
             user: enriched.user
           })
           .pipe(timeout(this.config.timeout))
@@ -141,7 +148,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         `Response from ${enriched.pattern} [${enriched.correlationId}] in ${processingTime}ms${userContext}`
       );
 
-      if (response.count) {
+      if (response.count !== undefined) {
         return {
           success: true,
           count: response.count,
@@ -169,10 +176,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         );
       }
 
-      return {
-        success: false,
-        error: error.message || 'Unknown error'
-      };
+      throw new HttpException(error.response, error.status);
     }
   }
 
@@ -189,7 +193,12 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
       this.logger.log(
         `Sending event to ${enriched.pattern} [${enriched.correlationId}]${userContext}`
       );
-      this.client.emit(enriched.pattern, enriched.data);
+      this.client.emit(enriched.pattern, {
+        filter: enriched.filter,
+        id: enriched.id,
+        payload: enriched.payload,
+        user: enriched.user
+      });
       this.logger.log(
         `Event sent to ${enriched.pattern} [${enriched.correlationId}]${userContext}`
       );
@@ -201,7 +210,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         `Failed to send event to ${enriched.pattern} [${enriched.correlationId}]${userContext}`,
         error
       );
-      throw error;
+      throw new HttpException(error.response, error.status);
     }
   }
 
