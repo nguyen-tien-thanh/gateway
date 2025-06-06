@@ -22,7 +22,7 @@ import { PermissionGuard } from 'src/common/guard/permission.guard';
 export class HouseController {
   constructor(private readonly houseService: HouseService) {}
 
-  @UseGuards(JwtTwoFactorGuard)
+  @UseGuards(JwtTwoFactorGuard, PermissionGuard)
   @Post()
   create(@Body() createHouseDto: HouseDto, @GetUser() user: UserWithRole) {
     return this.houseService.create({ ...createHouseDto, createdBy: user.id });

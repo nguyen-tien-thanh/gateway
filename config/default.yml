@@ -17,7 +17,7 @@ jwt:
   cookieExpiresIn: 604800
 
 app:
-  fallbackLanguage: 'en'
+  fallbackLanguage: 'vi'
   name: 'AGB'
   version: 'v0.1'
   description: 'Official AGB API'
