@@ -1,92 +1,60 @@
-## Features
+# Truthy Application
 
-- 🔐 **Authentication & Authorization**
+A robust NestJS application with authentication, user management, and email capabilities.
 
-  - JWT-based authentication
-  - Role-based access control (RBAC)
-  - Two-factor authentication (2FA)
-  - Password reset functionality
+## Quick Start Guide
 
-- 👥 **User Management**
+### Prerequisites
 
-  - User registration and profile management
-  - Role and permission management
-  - User activity tracking
+Before you begin, ensure you have the following installed:
 
-- 📧 **Email System**
-
-  - Email templates with Pug
-  - Queue-based email sending
-  - Multiple email templates for different purposes
-
-- 🔒 **Security**
-
-  - Rate limiting
-  - Request throttling
-  - CORS protection
-  - Helmet security headers
-
-- 📊 **Logging & Monitoring**
-  - Request logging
-
-## Tech Stack
-
-- **Framework:** NestJS
-- **Database:** PostgreSQL with Prisma ORM
-- **Cache:** Redis
-- **Queue:** Bull
-- **Email:** Nodemailer
-- **Authentication:** JWT, Passport
-- **API Documentation:** Swagger
-- **Testing:** Jest
-
-## Prerequisites
-
-- Node.js (v16 or later)
-- PostgreSQL
+- Node.js (v18 or later)
+- MySQL (v8.0 or later)
 - Redis
 - Yarn package manager
+
+### Database Schema
 
 <div align="center">
 <img src="./public/images/erd.png" alt="ERD" width="700">
 </div><br>
 
-## Installation
+### Installation Steps
 
-1. Install dependencies:
+1. **Install Dependencies**
 
-```bash
-yarn install
-```
+   ```bash
+   yarn install
+   ```
 
-2. Set up environment variables:
+2. **Environment Setup**
 
-```bash
-cp .env.example .env
-```
+   ```bash
+   cp .env.example .env
+   ```
 
-Edit `.env` with your configuration.
+   Edit the `.env` file with your MySQL configuration settings:
 
-3. Set up the database:
+   ```
+   DATABASE_URL="mysql://username:password@localhost:3306/your_database_name"
+   ```
 
-```bash
-# Generate Prisma client
-yarn prisma:generate
+3. **Database Setup**
 
-# Run migrations
-yarn prisma:migrate
+   ```bash
+   # Generate Prisma client
+   yarn prisma:generate
 
-# Seed the database
-yarn prisma:seed
+   # Run database migrations
+   yarn prisma:migrate
 
-# Default account
-- Admin: `admin@agb.com` | `admin123`
-- User: `user@agb.com` | `user123`
-```
+   # Seed the database with initial data
+   yarn prisma:seed
+   ```
 
-## Running the Application
+### Starting the Application
 
-### Development
+#### Development Mode
 
 ```bash
 yarn start:dev
@@ -94,22 +62,32 @@ yarn start:dev
 
 The application will be available at `http://localhost:7777`
 
-### Production
+#### Production Mode
 
 ```bash
+# Build the application
 yarn build
+
+# Start the production server
 yarn start:prod
 ```
 
-## API Documentation
+### Default Accounts
 
-When running in development mode, you can access the Swagger API documentation at:
+After seeding the database, you can use these accounts:
+
+- Admin: `admin@agb.com` | `admin123`
+- User: `user@agb.com` | `user123`
+
+### API Documentation
+
+Access the Swagger API documentation at:
 
 ```
 http://localhost:7777/api-docs
 ```
 
-## Available Scripts
+### Available Scripts
 
 - `yarn start:dev` - Start development server
 - `yarn build` - Build the application
