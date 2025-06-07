@@ -28,6 +28,14 @@ import { CustomValidationPipe } from './common/pipes/custom-validation.pipe';
 import { I18nExceptionFilterPipe } from './common/pipes/i18n-exception-filter.pipe';
 import { RabbitMQModule } from './shared/rabbitmq/rabbitmq.module';
 import { HouseModule } from './modules/house/house.module';
+import { RoomModule } from './modules/room/room.module';
+import { TenantContractModule } from './modules/tenant-contract/tenant-contract.module';
+import { AssetModule } from './modules/asset/asset.module';
+import { MaintenanceModule } from './modules/maintenance/maintenance.module';
+import { AssetCategoryModule } from './modules/asset-category/asset-category.module';
+import { ImageModule } from './modules/image/image.module';
+import { RoomAssetModule } from './modules/room-asset/room-asset.module';
+import { QRCodeModule } from './modules/qr-code/qr-code.module';
 
 const appConfig = config.get('app');
 
@@ -64,7 +72,15 @@ const appConfig = config.get('app');
     RefreshTokenModule,
     TwofaModule,
     DashboardModule,
-    HouseModule
+    HouseModule,
+    RoomModule,
+    TenantContractModule,
+    MaintenanceModule,
+    AssetModule,
+    AssetCategoryModule,
+    ImageModule,
+    QRCodeModule,
+    RoomAssetModule
   ],
   providers: [
     {

@@ -176,7 +176,10 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         );
       }
 
-      throw new HttpException(error.response, error.status);
+      throw new HttpException(
+        error.response || 'internalError',
+        error.status || 500
+      );
     }
   }
 

@@ -6,6 +6,7 @@
   "inactiveUser": "Your account is not activated!",
   "invalidCredentials": "Invalid credentials!",
   "Forbidden": "Access to the requested resource is forbidden!",
+  "Forbidden resource": "Access to the requested resource is forbidden!",
   "userInactive": "User is inactive, please contact administrator for further assistance!",
   "Not Found": "Data not found!",
   "tokenExpired": "Your session has expired!",

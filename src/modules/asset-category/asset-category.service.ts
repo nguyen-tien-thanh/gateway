@@ -1,27 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { CreateHouseDto, UpdateHouseDto } from './house.dto';
+import {
+  CreateAssetCategoryDto,
+  UpdateAssetCategoryDto
+} from './asset-category.dto';
 import {
   RabbitMQService,
   RMQRequest
 } from 'src/shared/rabbitmq/rabbitmq.service';
 import { IFilter } from 'src/common/decorators/filter.decorator';
-import { HOUSE_PATTERN } from './house.pattern';
+import { ASSET_CATEGORY_PATTERN } from './asset-category.pattern';
 
 @Injectable()
-export class HouseService {
+export class AssetCategoryService {
   constructor(private readonly rabbitMQService: RabbitMQService) {}
 
-  async create(createHouseDto: CreateHouseDto) {
+  async create(createAssetCategoryDto: CreateAssetCategoryDto) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.CREATE,
-      payload: createHouseDto
+      pattern: ASSET_CATEGORY_PATTERN.CREATE,
+      payload: createAssetCategoryDto
     };
     return await this.rabbitMQService.sendRequest(request);
   }
 
   async findAll(filter?: IFilter) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.FIND_ALL,
+      pattern: ASSET_CATEGORY_PATTERN.FIND_ALL,
       filter
     };
     return await this.rabbitMQService.sendRequest(request);
@@ -29,24 +32,24 @@ export class HouseService {
 
   async findOne(id: number) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.FIND_ONE,
+      pattern: ASSET_CATEGORY_PATTERN.FIND_ONE,
       id
     };
     return await this.rabbitMQService.sendRequest(request);
   }
 
-  async update(id: number, updateHouseDto: UpdateHouseDto) {
+  async update(id: number, updateAssetCategoryDto: UpdateAssetCategoryDto) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.UPDATE,
+      pattern: ASSET_CATEGORY_PATTERN.UPDATE,
       id,
-      payload: updateHouseDto
+      payload: updateAssetCategoryDto
     };
     return await this.rabbitMQService.sendRequest(request);
   }
 
   async remove(id: number) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.DELETE,
+      pattern: ASSET_CATEGORY_PATTERN.DELETE,
       id
     };
     return await this.rabbitMQService.sendRequest(request);

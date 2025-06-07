@@ -1,27 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { CreateHouseDto, UpdateHouseDto } from './house.dto';
+import { CreateImageDto, UpdateImageDto } from './image.dto';
 import {
   RabbitMQService,
   RMQRequest
 } from 'src/shared/rabbitmq/rabbitmq.service';
 import { IFilter } from 'src/common/decorators/filter.decorator';
-import { HOUSE_PATTERN } from './house.pattern';
+import { IMAGE_PATTERN } from './image.pattern';
 
 @Injectable()
-export class HouseService {
+export class ImageService {
   constructor(private readonly rabbitMQService: RabbitMQService) {}
 
-  async create(createHouseDto: CreateHouseDto) {
+  async create(createImageDto: CreateImageDto) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.CREATE,
-      payload: createHouseDto
+      pattern: IMAGE_PATTERN.CREATE,
+      payload: createImageDto
     };
     return await this.rabbitMQService.sendRequest(request);
   }
 
   async findAll(filter?: IFilter) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.FIND_ALL,
+      pattern: IMAGE_PATTERN.FIND_ALL,
       filter
     };
     return await this.rabbitMQService.sendRequest(request);
@@ -29,24 +29,24 @@ export class HouseService {
 
   async findOne(id: number) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.FIND_ONE,
+      pattern: IMAGE_PATTERN.FIND_ONE,
       id
     };
     return await this.rabbitMQService.sendRequest(request);
   }
 
-  async update(id: number, updateHouseDto: UpdateHouseDto) {
+  async update(id: number, updateImageDto: UpdateImageDto) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.UPDATE,
+      pattern: IMAGE_PATTERN.UPDATE,
       id,
-      payload: updateHouseDto
+      payload: updateImageDto
     };
     return await this.rabbitMQService.sendRequest(request);
   }
 
   async remove(id: number) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.DELETE,
+      pattern: IMAGE_PATTERN.DELETE,
       id
     };
     return await this.rabbitMQService.sendRequest(request);

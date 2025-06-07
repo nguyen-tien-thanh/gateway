@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
-import JwtTwoFactorGuard from 'src/common/guard/jwt-two-factor.guard';
+import { JwtTwoFactorGuard } from 'src/common/guard/jwt-two-factor.guard';
 import { PermissionGuard } from 'src/common/guard/permission.guard';
 import { DashboardService } from 'src/modules/dashboard/dashboard.service';
 import { OsStatsInterface } from 'src/modules/dashboard/interface/os-stats.interface';

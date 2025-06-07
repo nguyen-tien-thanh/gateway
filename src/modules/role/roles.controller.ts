@@ -20,7 +20,7 @@ import { RoleFilterDto } from 'src/modules/role/dto/role-filter.dto';
 import { RoleSerializer } from 'src/modules/role/serializer/role.serializer';
 import { Pagination } from 'src/shared/paginate';
 import { PermissionGuard } from 'src/common/guard/permission.guard';
-import JwtTwoFactorGuard from 'src/common/guard/jwt-two-factor.guard';
+import { JwtTwoFactorGuard } from 'src/common/guard/jwt-two-factor.guard';
 
 @ApiTags('roles')
 @UseGuards(JwtTwoFactorGuard, PermissionGuard)

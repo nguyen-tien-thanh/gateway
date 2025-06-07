@@ -12,7 +12,7 @@ import { HouseService } from './house.service';
 import { HouseDto } from './house.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { IFilter, Filter } from 'src/common/decorators/filter.decorator';
-import JwtTwoFactorGuard from 'src/common/guard/jwt-two-factor.guard';
+import { JwtTwoFactorGuard } from 'src/common/guard/jwt-two-factor.guard';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { UserWithRole } from '../auth/models/user.model';
 import { PermissionGuard } from 'src/common/guard/permission.guard';

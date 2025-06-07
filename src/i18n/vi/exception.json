@@ -6,6 +6,7 @@
   "inactiveUser": "Tài khoản của bạn chưa được kích hoạt!",
   "invalidCredentials": "Thông tin đăng nhập không đúng!",
   "Forbidden": "Truy cập vào tài nguyên được yêu cầu bị cấm!",
+  "Forbidden resource": "Truy cập vào tài nguyên được yêu cầu bị cấm!",
   "userInactive": "Người dùng không hoạt động, vui lòng liên hệ quản trị viên để được hỗ trợ thêm!",
   "Not Found": "Không tìm thấy dữ liệu!",
   "tokenExpired": "Phiên của bạn đã hết hạn!",

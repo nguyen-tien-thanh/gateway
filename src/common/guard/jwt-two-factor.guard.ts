@@ -7,7 +7,7 @@ import { UnauthorizedException } from 'src/common/exception/unauthorized.excepti
 import { StatusCodesList } from 'src/common/constants/status-codes-list.constants';
 
 @Injectable()
-export default class JwtTwoFactorGuard extends AuthGuard('jwt-two-factor') {
+export class JwtTwoFactorGuard extends AuthGuard('jwt-two-factor') {
   canActivate(context: ExecutionContext) {
     return super.canActivate(context);
   }

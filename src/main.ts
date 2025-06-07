@@ -65,7 +65,7 @@ async function bootstrap() {
   await app.listen(port);
 
   console.log('\n -------------------------------------------');
-  console.log(` 🚀 ${process.env.NODE_ENV.toUpperCase()} mode`);
+  console.log(` 🚀 ${process.env.NODE_ENV?.toUpperCase()} mode`);
   console.log(` 🌐 ${apiConfig.appUrl}`);
   console.log(' -------------------------------------------\n');
 }

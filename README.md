@@ -11,6 +11,7 @@ Before you begin, ensure you have the following installed:
 - Node.js (v18 or later)
 - MySQL (v8.0 or later)
 - Redis
+- RabbitMQ
 - Yarn package manager
 
 ### Database Schema
@@ -103,9 +104,9 @@ http://localhost:7777/api-docs
 
 ```
 agb
-├── config/                 # Configuration files
-├── prisma/                # Database schema and migrations
-├── public/                # Static files
+├── config/               # Configuration files
+├── prisma/               # Database schema and migrations
+├── public/               # Static files
 ├── src/
 │   ├── auth/             # Authentication module
 │   ├── common/           # Common utilities and guards
@@ -113,7 +114,7 @@ agb
 │   ├── mail/             # Email templates and services
 │   ├── user/             # User management
 │   └── main.ts           # Application entry point
-├── .env                   # Environment variables
+├── .env                  # Environment variables
 ├── .env.example          # Example environment variables
 └── package.json          # Project dependencies
 ```

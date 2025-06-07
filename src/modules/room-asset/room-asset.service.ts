@@ -1,27 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { CreateHouseDto, UpdateHouseDto } from './house.dto';
+import { CreateRoomAssetDto, UpdateRoomAssetDto } from './room-asset.dto';
 import {
   RabbitMQService,
   RMQRequest
 } from 'src/shared/rabbitmq/rabbitmq.service';
 import { IFilter } from 'src/common/decorators/filter.decorator';
-import { HOUSE_PATTERN } from './house.pattern';
+import { ROOM_ASSET_PATTERN } from './room-asset.pattern';
 
 @Injectable()
-export class HouseService {
+export class RoomAssetService {
   constructor(private readonly rabbitMQService: RabbitMQService) {}
 
-  async create(createHouseDto: CreateHouseDto) {
+  async create(createRoomAssetDto: CreateRoomAssetDto) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.CREATE,
-      payload: createHouseDto
+      pattern: ROOM_ASSET_PATTERN.CREATE,
+      payload: createRoomAssetDto
     };
     return await this.rabbitMQService.sendRequest(request);
   }
 
   async findAll(filter?: IFilter) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.FIND_ALL,
+      pattern: ROOM_ASSET_PATTERN.FIND_ALL,
       filter
     };
     return await this.rabbitMQService.sendRequest(request);
@@ -29,24 +29,24 @@ export class HouseService {
 
   async findOne(id: number) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.FIND_ONE,
+      pattern: ROOM_ASSET_PATTERN.FIND_ONE,
       id
     };
     return await this.rabbitMQService.sendRequest(request);
   }
 
-  async update(id: number, updateHouseDto: UpdateHouseDto) {
+  async update(id: number, updateRoomAssetDto: UpdateRoomAssetDto) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.UPDATE,
+      pattern: ROOM_ASSET_PATTERN.UPDATE,
       id,
-      payload: updateHouseDto
+      payload: updateRoomAssetDto
     };
     return await this.rabbitMQService.sendRequest(request);
   }
 
   async remove(id: number) {
     const request: RMQRequest = {
-      pattern: HOUSE_PATTERN.DELETE,
+      pattern: ROOM_ASSET_PATTERN.DELETE,
       id
     };
     return await this.rabbitMQService.sendRequest(request);

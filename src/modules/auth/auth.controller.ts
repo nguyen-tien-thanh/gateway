@@ -34,7 +34,7 @@ import { UserSearchFilterDto } from 'src/modules/auth/dto/user-search-filter.dto
 import { UserSerializer } from 'src/modules/auth/serializer/user.serializer';
 import { multerOptionsHelper } from 'src/common/helper/multer-options.helper';
 import { PermissionGuard } from 'src/common/guard/permission.guard';
-import JwtTwoFactorGuard from 'src/common/guard/jwt-two-factor.guard';
+import { JwtTwoFactorGuard } from 'src/common/guard/jwt-two-factor.guard';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { Pagination } from 'src/shared/paginate';
 import { RefreshPaginateFilterDto } from 'src/modules/refresh-token/dto/refresh-paginate-filter.dto';

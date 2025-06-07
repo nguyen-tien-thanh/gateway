@@ -20,7 +20,7 @@ import { PermissionPaginateFilterDto } from 'src/modules/permission/dto/permissi
 import { PermissionSerializer } from 'src/modules/permission/serializer/permission.serializer';
 import { PermissionGuard } from 'src/common/guard/permission.guard';
 import { Pagination } from 'src/shared/paginate';
-import JwtTwoFactorGuard from 'src/common/guard/jwt-two-factor.guard';
+import { JwtTwoFactorGuard } from 'src/common/guard/jwt-two-factor.guard';
 
 @ApiTags('permissions')
 @UseGuards(JwtTwoFactorGuard, PermissionGuard)

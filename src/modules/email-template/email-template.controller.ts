@@ -15,7 +15,7 @@ import { ApiTags } from '@nestjs/swagger';
 
 import { PermissionGuard } from 'src/common/guard/permission.guard';
 import { Pagination } from 'src/shared/paginate';
-import JwtTwoFactorGuard from 'src/common/guard/jwt-two-factor.guard';
+import { JwtTwoFactorGuard } from 'src/common/guard/jwt-two-factor.guard';
 import { EmailTemplateService } from './email-template.service';
 import { EmailTemplate } from './serializer/email-template.serializer';
 import { CreateEmailTemplateDto } from './dto/create-email-template.dto';
