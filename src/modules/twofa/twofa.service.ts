@@ -1,5 +1,4 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import * as config from 'config';
 import { Response } from 'express';
 import { authenticator } from 'otplib';
 import { toFileStream, toDataURL } from 'qrcode';
@@ -8,8 +7,6 @@ import { StatusCodesList } from 'src/common/constants/status-codes-list.constant
 import { AuthService } from 'src/modules/auth/auth.service';
 import { UserWithRole } from 'src/modules/auth/models/user.model';
 import { CustomHttpException } from 'src/common/exception/custom-http.exception';
-
-const TwofaConfig = config.get('twofa');
 
 @Injectable()
 export class TwofaService {
@@ -29,7 +26,7 @@ export class TwofaService {
     const secret = authenticator.generateSecret();
     const otpauthUrl = authenticator.keyuri(
       user.email,
-      TwofaConfig.authenticationAppNAme,
+      process.env.TWOFA_APP_NAME || 'SOTA',
       secret
     );
     await this.usersService.setTwoFactorAuthenticationSecret(secret, user.id);

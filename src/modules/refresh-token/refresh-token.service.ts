@@ -1,7 +1,6 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SignOptions, TokenExpiredError } from 'jsonwebtoken';
-import * as config from 'config';
 import { RefreshToken, Prisma } from '@prisma/client';
 
 import { CustomHttpException } from 'src/common/exception/custom-http.exception';
@@ -17,11 +16,9 @@ import { RefreshPaginateFilterDto } from 'src/modules/refresh-token/dto/refresh-
 import { RefreshTokenSerializer } from 'src/modules/refresh-token/serializer/refresh-token.serializer';
 import { Pagination } from 'src/shared/paginate';
 
-const appConfig = config.get('app');
-const tokenConfig = config.get('jwt');
 const BASE_OPTIONS: SignOptions = {
-  issuer: appConfig.appUrl,
-  audience: appConfig.frontendUrl
+  issuer: process.env.APP_URL || 'http://localhost:7777',
+  audience: process.env.FRONTEND_URL || 'http://localhost:3000'
 };
 
 @Injectable()
@@ -52,7 +49,7 @@ export class RefreshTokenService {
     return this.jwt.signAsync(
       { ...opts },
       {
-        expiresIn: tokenConfig.refreshExpiresIn
+        expiresIn: Number(process.env.JWT_REFRESH_EXPIRES_IN) || 604800
       }
     );
   }
@@ -74,7 +71,7 @@ export class RefreshTokenService {
       isRevoked: false,
       expires:
         refreshToken.expires ||
-        new Date(Date.now() + tokenConfig.refreshExpiresIn * 1000),
+        new Date(Date.now() + (Number(process.env.JWT_REFRESH_EXPIRES_IN) || 604800) * 1000),
       user: { connect: { id: user.id } }
     };
 

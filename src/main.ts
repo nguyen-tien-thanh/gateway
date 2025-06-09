@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
-import * as config from 'config';
 import helmet from 'helmet';
 import {
   DocumentBuilder,
@@ -13,12 +12,11 @@ import * as cookieParser from 'cookie-parser';
 import { AppModule } from 'src/app.module';
 
 async function bootstrap() {
-  const serverConfig = config.get('server');
-  const port = process.env.PORT || serverConfig.port;
+  const port = process.env.PORT || 7777;
   const app = await NestFactory.create(AppModule);
   app.use(helmet());
   app.useLogger(['log', 'error', 'warn', 'debug', 'verbose']);
-  const apiConfig = config.get('app');
+
   if (process.env.NODE_ENV === 'development') {
     app.enableCors({
       origin: true,
@@ -26,19 +24,19 @@ async function bootstrap() {
       credentials: true
     });
     const swaggerConfig = new DocumentBuilder()
-      .setTitle(apiConfig.name)
-      .setDescription(apiConfig.description)
-      .setVersion(apiConfig.version)
+      .setTitle(process.env.APP_NAME || 'SOTA')
+      .setDescription(process.env.APP_DESCRIPTION || 'Official SOTA API')
+      .setVersion(process.env.APP_VERSION || 'v0.1')
       .addBearerAuth()
       .build();
     const customOptions: SwaggerCustomOptions = {
       swaggerOptions: { persistAuthorization: true },
-      customSiteTitle: apiConfig.description
+      customSiteTitle: process.env.APP_DESCRIPTION || 'Official SOTA API'
     };
     const document = SwaggerModule.createDocument(app, swaggerConfig);
     SwaggerModule.setup('api', app, document, customOptions);
   } else {
-    const whitelist = [apiConfig.get<string>('frontendUrl')];
+    const whitelist = [process.env.FRONTEND_URL || 'http://localhost:3000'];
     app.enableCors({
       origin: function (origin, callback) {
         if (!origin || whitelist.indexOf(origin) !== -1) {
@@ -66,7 +64,7 @@ async function bootstrap() {
 
   console.log('\n -------------------------------------------');
   console.log(` 🚀 ${process.env.NODE_ENV?.toUpperCase()} mode`);
-  console.log(` 🌐 ${apiConfig.appUrl}`);
+  console.log(` 🌐 ${process.env.APP_URL || 'http://localhost:7777'}`);
   console.log(' -------------------------------------------\n');
 }
 

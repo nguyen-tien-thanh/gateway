@@ -1,4 +1,4 @@
-# Truthy Application
+# SOTA API
 
 A robust NestJS application with authentication, user management, and email capabilities.
 
@@ -77,8 +77,8 @@ yarn start:prod
 
 After seeding the database, you can use these accounts:
 
-- Admin: `admin@agb.com` | `admin123`
-- User: `user@agb.com` | `user123`
+- Admin: `admin@sota.com` | `admin123`
+- User: `user@sota.com` | `user123`
 
 ### API Documentation
 

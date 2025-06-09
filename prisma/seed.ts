@@ -135,12 +135,12 @@ async function main() {
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash('admin123', salt);
 
-  await prisma.user.upsert({
-    where: { email: 'admin@agb.com' },
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@sota.com' },
     update: {},
     create: {
       username: 'admin',
-      email: 'admin@agb.com',
+      email: 'admin@sota.com',
       password: hashedPassword,
       salt,
       name: 'Administrator',
@@ -159,12 +159,12 @@ async function main() {
   const testSalt = await bcrypt.genSalt();
   const testHashedPassword = await bcrypt.hash('user123', testSalt);
 
-  await prisma.user.upsert({
-    where: { email: 'user@agb.com' },
+  const user = await prisma.user.upsert({
+    where: { email: 'user@sota.com' },
     update: {},
     create: {
       username: 'testuser',
-      email: 'user@agb.com',
+      email: 'user@sota.com',
       password: testHashedPassword,
       salt: testSalt,
       name: 'Test User',
@@ -182,84 +182,54 @@ async function main() {
   console.log('Creating default email templates...');
   const emailTemplates = [
     {
-      title: 'System Mail Template',
-      slug: 'system-mail',
-      sender: 'noreply@agb.com',
+      title: 'System Notification',
+      slug: 'system-notification',
+      sender: 'noreply@sota.com',
       subject: 'System Notification',
       body: `
         <html>
           <body>
-            <h2>{{subject}}</h2>
+            <h2>System Notification</h2>
             <p>Hello {{username}},</p>
-            <p>This is a system notification from AGB.</p>
-            <div style="margin: 20px 0;">
-              {{link}}
-            </div>
-            <p>If you have any questions, please don't hesitate to contact us.</p>
-            <p>Best regards,<br>AGB Team</p>
+            <p>This is a system notification from SOTA.</p>
+            <p>{{message}}</p>
+            <p>Best regards,<br>SOTA Team</p>
           </body>
         </html>
       `,
       isDefault: true
     },
     {
-      title: 'Account Activation',
-      slug: 'activate-account',
-      sender: 'noreply@agb.com',
-      subject: 'Activate Your Account',
+      title: 'Welcome',
+      slug: 'welcome',
+      sender: 'noreply@sota.com',
+      subject: 'Welcome to SOTA',
       body: `
         <html>
           <body>
-            <h2>Welcome to AGB!</h2>
+            <h2>Welcome to SOTA!</h2>
             <p>Hello {{username}},</p>
-            <p>Thank you for registering with AGB. Please click the link below to activate your account:</p>
-            <div style="margin: 20px 0;">
-              {{link}}
-            </div>
-            <p>If you didn't create this account, please ignore this email.</p>
-            <p>Best regards,<br>AGB Team</p>
+            <p>Thank you for registering with SOTA. Please click the link below to activate your account:</p>
+            <p>{{link}}</p>
+            <p>Best regards,<br>SOTA Team</p>
           </body>
         </html>
       `,
       isDefault: true
     },
     {
-      title: 'Password Reset',
-      slug: 'reset-password',
-      sender: 'noreply@agb.com',
-      subject: 'Reset Your Password',
+      title: 'New User',
+      slug: 'new-user',
+      sender: 'noreply@sota.com',
+      subject: 'Welcome to SOTA',
       body: `
         <html>
           <body>
-            <h2>Password Reset Request</h2>
+            <h2>Welcome to SOTA!</h2>
             <p>Hello {{username}},</p>
-            <p>We received a request to reset your password. Click the link below to create a new password:</p>
-            <div style="margin: 20px 0;">
-              {{link}}
-            </div>
-            <p>If you didn't request this password reset, please ignore this email.</p>
-            <p>Best regards,<br>AGB Team</p>
-          </body>
-        </html>
-      `,
-      isDefault: true
-    },
-    {
-      title: 'New User Set Password',
-      slug: 'new-user-set-password',
-      sender: 'noreply@agb.com',
-      subject: 'Set Your Password',
-      body: `
-        <html>
-          <body>
-            <h2>Welcome to AGB!</h2>
-            <p>Hello {{username}},</p>
-            <p>An account has been created for you on AGB. Please click the link below to set your password:</p>
-            <div style="margin: 20px 0;">
-              {{link}}
-            </div>
-            <p>If you have any questions, please contact your administrator.</p>
-            <p>Best regards,<br>AGB Team</p>
+            <p>An account has been created for you on SOTA. Please click the link below to set your password:</p>
+            <p>{{link}}</p>
+            <p>Best regards,<br>SOTA Team</p>
           </body>
         </html>
       `,
@@ -268,17 +238,17 @@ async function main() {
     {
       title: 'Two Factor Authentication Enabled',
       slug: 'two-fa-enabled',
-      sender: 'noreply@agb.com',
+      sender: 'noreply@sota.com',
       subject: 'Two-Factor Authentication Enabled',
       body: `
         <html>
           <body>
             <h2>Two-Factor Authentication Enabled</h2>
             <p>Hello {{username}},</p>
-            <p>Two-factor authentication has been successfully enabled for your AGB account.</p>
+            <p>Two-factor authentication has been successfully enabled for your SOTA account.</p>
             <p>Your account is now more secure with an additional layer of protection.</p>
             <p>If you didn't enable this feature, please contact support immediately.</p>
-            <p>Best regards,<br>AGB Team</p>
+            <p>Best regards,<br>SOTA Team</p>
           </body>
         </html>
       `,

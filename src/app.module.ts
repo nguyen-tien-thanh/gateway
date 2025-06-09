@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD, APP_PIPE, APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import * as path from 'path';
-import * as config from 'config';
 import {
   CookieResolver,
   HeaderResolver,
@@ -15,7 +14,7 @@ import { AuthModule } from 'src/modules/auth/auth.module';
 import { RolesModule } from 'src/modules/role/roles.module';
 import { PermissionsModule } from 'src/modules/permission/permissions.module';
 import * as throttleConfig from 'src/config/throttle-config';
-import { MailModule } from 'src/modules/mail/mail.module';
+// import { MailModule } from 'src/modules/mail/mail.module';
 import { EmailTemplateModule } from 'src/modules/email-template/email-template.module';
 import { RefreshTokenModule } from 'src/modules/refresh-token/refresh-token.module';
 import { TwofaModule } from 'src/modules/twofa/twofa.module';
@@ -37,8 +36,6 @@ import { ImageModule } from './modules/image/image.module';
 import { RoomAssetModule } from './modules/room-asset/room-asset.module';
 import { QRCodeModule } from './modules/qr-code/qr-code.module';
 
-const appConfig = config.get('app');
-
 @Module({
   imports: [
     ThrottlerModule.forRootAsync({
@@ -48,7 +45,7 @@ const appConfig = config.get('app');
     RabbitMQModule,
     I18nModule.forRootAsync({
       useFactory: () => ({
-        fallbackLanguage: appConfig.fallbackLanguage,
+        fallbackLanguage: process.env.APP_FALLBACK_LANGUAGE || 'vi',
         parserOptions: {
           path: path.join(__dirname, '../i18n/'),
           watch: true
@@ -67,7 +64,7 @@ const appConfig = config.get('app');
     AuthModule,
     RolesModule,
     PermissionsModule,
-    MailModule,
+    // MailModule,
     EmailTemplateModule,
     RefreshTokenModule,
     TwofaModule,

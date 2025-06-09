@@ -1,8 +1,8 @@
-version: '3.7'
+version: '3.8'
 
 services:
-  main:
-    container_name: main
+  app:
+    container_name: sota-api
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,69 +10,80 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
-    env_file:
-      - .env
-    networks:
-      - webnet
+      - "7777:7777"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=mysql://root:password@mysql:3306/sota
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
     depends_on:
-      - mysql
-      - rabbitmq
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - sota-network
 
   mysql:
-    container_name: mysql
+    container_name: sota-mysql
     image: mysql:8.0
-    env_file:
-      - .env
-    networks:
-      - webnet
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_DATABASE: ${DB_DATABASE_NAME}
-      MYSQL_DATA: /var/lib/mysql
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=sota
     ports:
-      - ${DB_PORT}:3306
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - sota-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
-    image: 'redis:alpine'
-    container_name: redis
-    restart: always
-    healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
-    volumes:
-      - .:/data
-    env_file:
-      - .env
+    container_name: sota-redis
+    image: redis:alpine
     ports:
-      - ${REDIS_PORT}:6379
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - sota-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   rabbitmq:
-    image: rabbitmq:3.8-management-alpine
-    container_name: rabbitmq
-    restart: always
+    container_name: sota-rabbitmq
+    image: rabbitmq:3.12-management-alpine
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
-      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
     ports:
-      - '5672:5672' # AMQP port
-      - '15672:15672' # Management UI port
+      - "5672:5672"   # AMQP port
+      - "15672:15672" # Management UI port
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - webnet
+      - sota-network
     healthcheck:
-      test: ['CMD', 'rabbitmqctl', 'status']
+      test: ["CMD", "rabbitmqctl", "status"]
       interval: 30s
       timeout: 10s
       retries: 5
 
 networks:
-  webnet:
+  sota-network:
     driver: bridge
+
 volumes:
   mysql_data:
+  redis_data:
   rabbitmq_data:

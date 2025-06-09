@@ -2,36 +2,32 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import * as Redis from 'ioredis';
-import * as config from 'config';
 
 import { AuthController } from 'src/modules/auth/auth.controller';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { PrismaModule } from 'src/shared/prisma/prisma.module';
-import { MailModule } from 'src/modules/mail/mail.module';
+// import { MailModule } from 'src/modules/mail/mail.module';
 import { RateLimiterRedis } from 'rate-limiter-flexible';
 import { RefreshTokenModule } from 'src/modules/refresh-token/refresh-token.module';
 import { JwtTwoFactorStrategy } from 'src/common/strategy/jwt-two-factor.strategy';
 import { JwtStrategy } from 'src/common/strategy/jwt.strategy';
 
-const throttleConfig = config.get('throttle.login');
-const redisConfig = config.get('queue');
-const jwtConfig = config.get('jwt');
 const LoginThrottleFactory = {
   provide: 'LOGIN_THROTTLE',
   useFactory: () => {
     const redisClient = new Redis({
       enableOfflineQueue: false,
-      host: process.env.REDIS_HOST || redisConfig.host,
-      port: process.env.REDIS_PORT || redisConfig.port,
-      password: process.env.REDIS_PASSWORD || redisConfig.password
+      host: process.env.REDIS_HOST || 'localhost',
+      port: Number(process.env.REDIS_PORT) || 6379,
+      password: process.env.REDIS_PASSWORD || ''
     });
 
     return new RateLimiterRedis({
       storeClient: redisClient,
-      keyPrefix: throttleConfig.prefix,
-      points: throttleConfig.limit,
-      duration: 60 * 60 * 24 * 30, // Store number for 30 days since first fail
-      blockDuration: throttleConfig.blockDuration
+      keyPrefix: process.env.THROTTLE_LOGIN_PREFIX || 'login_fail_throttle',
+      points: Number(process.env.THROTTLE_LOGIN_LIMIT) || 5,
+      duration: Number(process.env.THROTTLE_LOGIN_DURATION) || 60 * 60 * 24 * 30, // Store number for 30 days since first fail
+      blockDuration: Number(process.env.THROTTLE_LOGIN_BLOCK_DURATION) || 3000
     });
   }
 };
@@ -41,16 +37,16 @@ const LoginThrottleFactory = {
     PrismaModule,
     JwtModule.registerAsync({
       useFactory: () => ({
-        secret: process.env.JWT_SECRET || jwtConfig.secret,
+        secret: process.env.JWT_SECRET || 'example@123',
         signOptions: {
-          expiresIn: process.env.JWT_EXPIRES_IN || jwtConfig.expiresIn
+          expiresIn: Number(process.env.JWT_EXPIRES_IN) || 900
         }
       })
     }),
     PassportModule.register({
       defaultStrategy: 'jwt'
     }),
-    MailModule,
+    // MailModule,
     RefreshTokenModule
   ],
   controllers: [AuthController],

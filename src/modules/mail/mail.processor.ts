@@ -1,5 +1,4 @@
 import { Logger } from '@nestjs/common';
-import * as config from 'config';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
   OnQueueActive,
@@ -12,7 +11,7 @@ import { Job } from 'bull';
 
 import { MailJobInterface } from 'src/modules/mail/interface/mail-job.interface';
 
-@Processor(config.get('mail.queueName'))
+@Processor(process.env.MAIL_QUEUE_NAME || 'agb-mail')
 export class MailProcessor {
   private readonly logger = new Logger(this.constructor.name);
 
@@ -52,11 +51,10 @@ export class MailProcessor {
     }>
   ): Promise<any> {
     this.logger.log(`Sending email to '${job.data.payload.to}'`);
-    const mailConfig = config.get('mail');
     try {
       const options: Record<string, any> = {
         to: job.data.payload.to,
-        from: process.env.MAIL_FROM || mailConfig.fromMail,
+        from: process.env.MAIL_FROM_MAIL || 'noreply@agb.com',
         subject: job.data.payload.subject,
         template: 'email-layout',
         context: job.data.payload.context,

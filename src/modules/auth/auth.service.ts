@@ -2,10 +2,10 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  UnprocessableEntityException
+  UnprocessableEntityException,
+  forwardRef
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as config from 'config';
 import { existsSync, unlinkSync } from 'fs';
 import { SignOptions } from 'jsonwebtoken';
 import { User, UserStatus, Prisma } from '@prisma/client';
@@ -21,7 +21,6 @@ import { NotFoundException } from 'src/common/exception/not-found.exception';
 import { UnauthorizedException } from 'src/common/exception/unauthorized.exception';
 import { CustomHttpException } from 'src/common/exception/custom-http.exception';
 import { MailJobInterface } from 'src/modules/mail/interface/mail-job.interface';
-import { MailService } from 'src/modules/mail/mail.service';
 import { Pagination } from 'src/shared/paginate';
 import { RefreshToken } from '@prisma/client';
 import { RefreshTokenService } from 'src/modules/refresh-token/refresh-token.service';
@@ -37,18 +36,10 @@ import { ValidationPayloadInterface } from 'src/common/interfaces/validation-err
 import { RefreshPaginateFilterDto } from 'src/modules/refresh-token/dto/refresh-paginate-filter.dto';
 import { RefreshTokenSerializer } from 'src/modules/refresh-token/serializer/refresh-token.serializer';
 
-const throttleConfig = config.get('throttle.login');
-const jwtConfig = config.get('jwt');
-const appConfig = config.get('app');
-// const isSameSite = process.env.IS_SAME_SITE || appConfig.sameSite;
-// for heroku
-const isSameSite =
-  appConfig.sameSite !== null
-    ? appConfig.sameSite
-    : process.env.IS_SAME_SITE === 'true';
+const isSameSite = process.env.IS_SAME_SITE === 'true';
 const BASE_OPTIONS: SignOptions = {
-  issuer: appConfig.appUrl,
-  audience: appConfig.frontendUrl
+  issuer: process.env.APP_URL || 'http://localhost:7777',
+  audience: process.env.FRONTEND_URL || 'http://localhost:3000'
 };
 
 @Injectable()
@@ -56,7 +47,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
-    private readonly mailService: MailService,
+    @Inject(forwardRef(() => RefreshTokenService))
     private readonly refreshTokenService: RefreshTokenService,
     @Inject('LOGIN_THROTTLE')
     private readonly rateLimiter: RateLimiterStoreAbstract
@@ -77,19 +68,18 @@ export class AuthService {
     slug: string,
     linkLabel: string
   ) {
-    const appConfig = config.get('app');
     const mailData: MailJobInterface = {
       to: user.email,
       subject,
       slug,
       context: {
         email: user.email,
-        link: `<a href="${appConfig.frontendUrl}/${url}">${linkLabel} →</a>`,
+        link: `<a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/${url}">${linkLabel} →</a>`,
         username: user.username,
         subject
       }
     };
-    await this.mailService.sendMail(mailData, 'system-mail');
+    // await this.mailService.sendMail(mailData, 'system-mail');
   }
 
   /**
@@ -180,7 +170,7 @@ export class AuthService {
     // Check if user is already blocked
     if (
       resUsernameAndIP !== null &&
-      resUsernameAndIP.consumedPoints > throttleConfig.limit
+      resUsernameAndIP.consumedPoints > (Number(process.env.THROTTLE_LOGIN_LIMIT) || 5)
     ) {
       retrySecs = Math.round(resUsernameAndIP.msBeforeNext / 1000) || 1;
     }
@@ -306,18 +296,20 @@ export class AuthService {
   /**
    * Generate access token
    * @param user
-   * @param isTwoFAAuthenticated
+   * @param twoFactor
    */
-  public async generateAccessToken(
-    user: UserSerializer,
-    isTwoFAAuthenticated = false
-  ): Promise<string> {
+  public async generateAccessToken(user: UserSerializer, twoFactor = false): Promise<string> {
     const opts: SignOptions = {
       ...BASE_OPTIONS,
-      subject: String(user.id),
-      expiresIn: jwtConfig.expiresIn
+      subject: String(user.id)
     };
-    return this.jwt.signAsync({ isTwoFAAuthenticated }, opts);
+
+    return this.jwt.signAsync(
+      { ...opts, twoFactor },
+      {
+        expiresIn: Number(process.env.JWT_EXPIRES_IN) || 900
+      }
+    );
   }
 
   /**
@@ -350,13 +342,21 @@ export class AuthService {
   async findById(id: number): Promise<UserSerializer> {
     const user = await this.prisma.user.findUnique({
       where: { id },
-      include: { role: true }
+      include: {
+        role: {
+          include: {
+            permissions: {
+              include: {
+                permission: true
+              }
+            }
+          }
+        }
+      }
     });
+
     if (!user) {
-      throw new NotFoundException(
-        ExceptionTitleList.NotFound,
-        StatusCodesList.NotFound
-      );
+      throw new NotFoundException('User not found');
     }
 
     return this.transformUser(user);
@@ -695,15 +695,12 @@ export class AuthService {
     const isSecure =
       process.env.NODE_ENV === 'production' &&
       process.env.IS_HTTPS_ENABLED === 'true';
-    let expiredAt = jwtConfig.expiresIn;
-    if (typeof expiredAt === 'string') {
-      expiredAt = jwtConfig.expiresIn;
-    }
+    const expiredAt = Number(process.env.JWT_EXPIRES_IN) || 900;
     const authCookie = `Authentication=${accessToken}; HttpOnly; SameSite=${
       isSameSite ? 'Strict' : 'None'
     }; Path=/; Max-Age=${expiredAt}; ${isSecure ? 'Secure' : ''}`;
     if (refreshToken) {
-      const refreshExpiredAt = jwtConfig.refreshExpiresIn;
+      const refreshExpiredAt = Number(process.env.JWT_REFRESH_EXPIRES_IN) || 604800;
       const refreshCookie = `Refresh=${refreshToken}; HttpOnly; SameSite=${
         isSameSite ? 'Strict' : 'None'
       }; Path=/; Max-Age=${refreshExpiredAt}; ${isSecure ? 'Secure' : ''}`;

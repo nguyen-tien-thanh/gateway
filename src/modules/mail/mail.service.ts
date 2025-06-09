@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Queue } from 'bull';
-import * as config from 'config';
 import { InjectQueue } from '@nestjs/bull';
 
 import { MailJobInterface } from 'src/modules/mail/interface/mail-job.interface';
@@ -9,7 +8,7 @@ import { EmailTemplateService } from 'src/modules/email-template/email-template.
 @Injectable()
 export class MailService {
   constructor(
-    @InjectQueue(config.get('mail.queueName'))
+    @InjectQueue(process.env.MAIL_QUEUE_NAME || 'agb-mail')
     private mailQueue: Queue,
     private readonly emailTemplateService: EmailTemplateService
   ) {}
