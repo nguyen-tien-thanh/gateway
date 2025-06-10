@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  gateway:
+    image: nguyentienthanh2909/371-gateway:latest
+    container_name: gateway
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - DATABASE_URL=${DATABASE_URL}
+    extra_hosts:
+      - "host.docker.internal:host-gateway" 
