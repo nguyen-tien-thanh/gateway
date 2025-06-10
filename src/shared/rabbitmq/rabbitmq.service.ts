@@ -33,9 +33,8 @@ export interface RMQRequest {
 }
 
 export interface RMQResponse {
-  success: boolean;
-  count?: number;
-  data?: any;
+  totalItems?: number;
+  results?: any;
   error?: string;
   statusCode?: number;
   message?: string;
@@ -150,16 +149,12 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 
       if (response.count !== undefined) {
         return {
-          success: true,
-          count: response.count,
-          data: response.data
+          totalItems: response.count,
+          results: response.data
         };
       }
 
-      return {
-        success: true,
-        data: response
-      };
+      return response;
     } catch (error) {
       const processingTime = Date.now() - startTime;
       const userContext = enriched.user
