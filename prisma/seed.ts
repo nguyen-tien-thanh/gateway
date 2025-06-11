@@ -133,7 +133,7 @@ async function main() {
   // Create admin user
   console.log('Creating admin user...');
   const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash('admin123', salt);
+  const hashedPassword = await bcrypt.hash('Sota@123', salt);
 
   const admin = await prisma.user.upsert({
     where: { email: 'admin@sota.com' },
@@ -157,7 +157,7 @@ async function main() {
   // Create test user
   console.log('Creating test user...');
   const testSalt = await bcrypt.genSalt();
-  const testHashedPassword = await bcrypt.hash('user123', testSalt);
+  const testHashedPassword = await bcrypt.hash('Sota@123', testSalt);
 
   const user = await prisma.user.upsert({
     where: { email: 'user@sota.com' },
