@@ -4,7 +4,8 @@ import {
   IsOptional,
   IsNumber,
   IsPositive,
-  IsInt
+  IsInt,
+  IsEnum
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PartialType } from '@nestjs/swagger';
@@ -31,6 +32,11 @@ export class HouseDto {
   @IsNumber({ maxDecimalPlaces: 2 })
   @IsPositive()
   totalArea: number;
+
+  @IsEnum(['ACTIVE', 'INACTIVE'])
+  @Type(() => String)
+  @IsOptional()
+  status?: string;
 }
 
 export class CreateHouseDto extends PartialType(HouseDto) {
