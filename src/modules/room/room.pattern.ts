@@ -3,5 +3,5 @@ export const ROOM_PATTERN = {
   FIND_ALL: 'room.findAll',
   FIND_ONE: 'room.findOne',
   UPDATE: 'room.update',
-  DELETE: 'room.delete'
+  REMOVE: 'room.remove'
 };

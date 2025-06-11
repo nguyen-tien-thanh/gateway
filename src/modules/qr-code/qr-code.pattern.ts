@@ -3,5 +3,5 @@ export const QR_CODE_PATTERN = {
   FIND_ALL: 'qrCode.findAll',
   FIND_ONE: 'qrCode.findOne',
   UPDATE: 'qrCode.update',
-  DELETE: 'qrCode.delete'
+  REMOVE: 'qrCode.remove'
 };

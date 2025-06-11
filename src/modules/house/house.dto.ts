@@ -33,7 +33,7 @@ export class HouseDto {
   @IsPositive()
   totalArea: number;
 
-  @IsEnum(['ACTIVE', 'INACTIVE'])
+  @IsEnum(['ACTIVE', 'INACTIVE', 'MAINTENANCE'])
   @Type(() => String)
   @IsOptional()
   status?: string;

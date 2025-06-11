@@ -3,5 +3,5 @@ export const TENANT_CONTRACT_PATTERN = {
   FIND_ALL: 'tenantContract.findAll',
   FIND_ONE: 'tenantContract.findOne',
   UPDATE: 'tenantContract.update',
-  DELETE: 'tenantContract.delete'
+  REMOVE: 'tenantContract.remove'
 };

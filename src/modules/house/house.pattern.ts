@@ -3,5 +3,5 @@ export const HOUSE_PATTERN = {
   FIND_ALL: 'house.findAll',
   FIND_ONE: 'house.findOne',
   UPDATE: 'house.update',
-  DELETE: 'house.delete'
+  REMOVE: 'house.remove'
 };

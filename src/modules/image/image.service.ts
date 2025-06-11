@@ -46,7 +46,7 @@ export class ImageService {
 
   async remove(id: number) {
     const request: RMQRequest = {
-      pattern: IMAGE_PATTERN.DELETE,
+      pattern: IMAGE_PATTERN.REMOVE,
       id
     };
     return await this.rabbitMQService.sendRequest(request);

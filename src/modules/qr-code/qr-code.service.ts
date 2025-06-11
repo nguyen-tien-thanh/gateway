@@ -46,7 +46,7 @@ export class QRCodeService {
 
   async remove(id: number) {
     const request: RMQRequest = {
-      pattern: QR_CODE_PATTERN.DELETE,
+      pattern: QR_CODE_PATTERN.REMOVE,
       id
     };
     return await this.rabbitMQService.sendRequest(request);

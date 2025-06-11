@@ -46,7 +46,7 @@ export class AssetService {
 
   async remove(id: number) {
     const request: RMQRequest = {
-      pattern: ASSET_PATTERN.DELETE,
+      pattern: ASSET_PATTERN.REMOVE,
       id
     };
     return await this.rabbitMQService.sendRequest(request);

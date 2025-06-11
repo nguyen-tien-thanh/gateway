@@ -49,7 +49,7 @@ export class TenantContractService {
 
   async remove(id: number) {
     const request: RMQRequest = {
-      pattern: TENANT_CONTRACT_PATTERN.DELETE,
+      pattern: TENANT_CONTRACT_PATTERN.REMOVE,
       id
     };
     return await this.rabbitMQService.sendRequest(request);

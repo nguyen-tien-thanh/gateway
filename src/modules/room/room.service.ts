@@ -46,7 +46,7 @@ export class RoomService {
 
   async remove(id: number) {
     const request: RMQRequest = {
-      pattern: ROOM_PATTERN.DELETE,
+      pattern: ROOM_PATTERN.REMOVE,
       id
     };
     return await this.rabbitMQService.sendRequest(request);

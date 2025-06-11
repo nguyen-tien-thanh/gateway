@@ -3,5 +3,5 @@ export const IMAGE_PATTERN = {
   FIND_ALL: 'image.findAll',
   FIND_ONE: 'image.findOne',
   UPDATE: 'image.update',
-  DELETE: 'image.delete'
+  REMOVE: 'image.remove'
 };

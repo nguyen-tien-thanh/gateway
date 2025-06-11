@@ -3,5 +3,5 @@ export const ASSET_PATTERN = {
   FIND_ALL: 'asset.findAll',
   FIND_ONE: 'asset.findOne',
   UPDATE: 'asset.update',
-  DELETE: 'asset.delete'
+  REMOVE: 'asset.remove'
 };
