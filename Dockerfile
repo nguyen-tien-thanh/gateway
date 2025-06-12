@@ -26,7 +26,7 @@ RUN yarn install --production
 
 COPY . .
 COPY --from=development /usr/src/app/dist ./dist
-# COPY --from=development /usr/src/app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=development /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 
 RUN yarn prisma:generate
 
