@@ -7,20 +7,22 @@ import {
   HttpStatus,
   Param,
   Post,
-  Put,
-  Query,
+  Patch,
   UseGuards
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { PermissionsService } from 'src/modules/permission/permissions.service';
-import { CreatePermissionDto } from 'src/modules/permission/dto/create-permission.dto';
-import { UpdatePermissionDto } from 'src/modules/permission/dto/update-permission.dto';
-import { PermissionPaginateFilterDto } from 'src/modules/permission/dto/permission-paginate-filter.dto';
-import { PermissionSerializer } from 'src/modules/permission/serializer/permission.serializer';
+import {
+  CreatePermissionDto,
+  PermissionDto,
+  UpdatePermissionDto
+} from 'src/modules/permission/dto/permission.dto';
 import { PermissionGuard } from 'src/common/guard/permission.guard';
 import { Pagination } from 'src/shared/paginate';
 import { JwtTwoFactorGuard } from 'src/common/guard/jwt-two-factor.guard';
+import { IFilter } from 'src/common/decorators/filter.decorator';
+import { Filter } from 'src/common/decorators/filter.decorator';
 
 @ApiTags('permissions')
 @UseGuards(JwtTwoFactorGuard, PermissionGuard)
@@ -33,33 +35,30 @@ export class PermissionsController {
   create(
     @Body()
     createPermissionDto: CreatePermissionDto
-  ): Promise<PermissionSerializer> {
+  ): Promise<PermissionDto> {
     return this.permissionsService.create(createPermissionDto);
   }
 
   @Get()
-  findAll(
-    @Query()
-    permissionFilterDto: PermissionPaginateFilterDto
-  ): Promise<Pagination<PermissionSerializer>> {
-    return this.permissionsService.findAll(permissionFilterDto);
+  findAll(@Filter() filter?: IFilter): Promise<Pagination<PermissionDto>> {
+    return this.permissionsService.findAll(filter);
   }
 
   @Get(':id')
   findOne(
     @Param('id')
     id: string
-  ): Promise<PermissionSerializer> {
+  ): Promise<PermissionDto> {
     return this.permissionsService.findById(+id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   update(
     @Param('id')
     id: string,
     @Body()
     updatePermissionDto: UpdatePermissionDto
-  ): Promise<PermissionSerializer> {
+  ): Promise<PermissionDto> {
     return this.permissionsService.update(+id, updatePermissionDto);
   }
 
@@ -73,7 +72,7 @@ export class PermissionsController {
   }
 
   @Get('/assignment/list')
-  getPermissionForRoleAssignment(): Promise<PermissionSerializer[]> {
+  getPermissionForRoleAssignment(): Promise<PermissionDto[]> {
     return this.permissionsService.getPermissionForRoleAssignment();
   }
 }

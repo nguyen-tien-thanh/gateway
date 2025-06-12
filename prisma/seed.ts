@@ -6,82 +6,202 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // Create default permissions
+  const roles = [
+    {
+      id: 1,
+      name: 'ADMIN',
+      description: 'Administrator'
+    },
+    {
+      id: 2,
+      name: 'OWNER',
+      description: 'Chủ nhà / Owner'
+    },
+    {
+      id: 3,
+      name: 'STAFF',
+      description: 'Nhân viên / Staff'
+    },
+    {
+      id: 4,
+      name: 'PARTNER',
+      description: 'Đối tác / Partner'
+    },
+    {
+      id: 5,
+      name: 'TENANT',
+      description: 'Người thuê nhà / Tenant'
+    },
+    {
+      id: 6,
+      name: 'USER',
+      description: 'Người dùng / User'
+    }
+  ];
+
   const permissions = [
     {
-      resource: 'user',
+      id: 1,
+      resource: 'users',
       description: 'user-index',
-      path: '/api/v1/user',
+      path: '/users',
       method: 'GET',
       isDefault: true
     },
     {
-      resource: 'user',
+      id: 2,
+      resource: 'users',
       description: 'user-show',
-      path: '/api/v1/user/:id',
+      path: '/users/:id',
       method: 'GET',
       isDefault: true
     },
     {
-      resource: 'user',
+      id: 3,
+      resource: 'users',
       description: 'user-store',
-      path: '/api/v1/user',
+      path: '/users',
       method: 'POST',
       isDefault: true
     },
     {
-      resource: 'user',
+      id: 4,
+      resource: 'users',
       description: 'user-update',
-      path: '/api/v1/user/:id',
+      path: '/users/:id',
       method: 'PATCH',
       isDefault: true
     },
     {
-      resource: 'user',
+      id: 5,
+      resource: 'users',
       description: 'user-delete',
-      path: '/api/v1/user/:id',
+      path: '/users/:id',
       method: 'DELETE',
       isDefault: true
     },
     {
-      resource: 'role',
+      id: 6,
+      resource: 'roles',
       description: 'role-index',
-      path: '/api/v1/role',
+      path: '/roles',
       method: 'GET',
       isDefault: true
     },
     {
-      resource: 'role',
+      id: 7,
+      resource: 'roles',
       description: 'role-show',
-      path: '/api/v1/role/:id',
+      path: '/roles/:id',
       method: 'GET',
       isDefault: true
     },
     {
-      resource: 'role',
+      id: 8,
+      resource: 'roles',
       description: 'role-store',
-      path: '/api/v1/role',
+      path: '/roles',
       method: 'POST',
       isDefault: true
     },
     {
-      resource: 'role',
+      id: 9,
+      resource: 'roles',
       description: 'role-update',
-      path: '/api/v1/role/:id',
+      path: '/roles/:id',
       method: 'PATCH',
       isDefault: true
     },
     {
-      resource: 'role',
+      id: 10,
+      resource: 'roles',
       description: 'role-delete',
-      path: '/api/v1/role/:id',
+      path: '/roles/:id',
+      method: 'DELETE',
+      isDefault: true
+    },
+    // for permissions
+    {
+      id: 11,
+      resource: 'permissions',
+      description: 'permission-index',
+      path: '/permissions',
+      method: 'GET',
+      isDefault: true
+    },
+    {
+      id: 12,
+      resource: 'permissions',
+      description: 'permission-show',
+      path: '/permissions/:id',
+      method: 'GET',
+      isDefault: true
+    },
+    {
+      id: 13,
+      resource: 'permissions',
+      description: 'permission-store',
+      path: '/permissions',
+      method: 'POST',
+      isDefault: true
+    },
+    {
+      id: 14,
+      resource: 'permissions',
+      description: 'permission-update',
+      path: '/permissions/:id',
+      method: 'PATCH',
+      isDefault: true
+    },
+    {
+      id: 15,
+      resource: 'permissions',
+      description: 'permission-delete',
+      path: '/permissions/:id',
       method: 'DELETE',
       isDefault: true
     }
   ];
 
-  console.log('Creating permissions...');
+  for (const roleData of roles) {
+    console.log(`Creating role ${roleData.name}...`);
+    const role = await prisma.role.upsert({
+      where: { name: roleData.name },
+      update: {},
+      create: roleData
+    });
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash('Sota@123', salt);
+    const dump = role.name.toLowerCase();
+    const randomVietnamPhone = () =>
+      '0' + Math.floor(100000000 + Math.random() * 900000000);
+    const randomAddress = () =>
+      ['Hà Nội', 'TP. HCM', 'Đà Nẵng', 'Cần Thơ', 'Hải Phòng'][
+        Math.floor(Math.random() * 5)
+      ];
+
+    await prisma.user.upsert({
+      where: { email: `${dump}@sota.com` },
+      update: {},
+      create: {
+        email: `${dump}@sota.com`,
+        password: hashedPassword,
+        salt,
+        name: role.name,
+        address: randomAddress(),
+        contact: randomVietnamPhone(),
+        avatar: `https://i.pravatar.cc/150?u=${dump}@sota.com`,
+        status: UserStatus.ACTIVE,
+        roleId: role.id,
+        token: '',
+        username: dump
+      }
+    });
+  }
+
   for (const permissionData of permissions) {
+    console.log(`Creating permission ${permissionData.description}...`);
     await prisma.permission.upsert({
       where: { description: permissionData.description },
       update: {},
@@ -89,32 +209,10 @@ async function main() {
     });
   }
 
-  // Create admin role
-  console.log('Creating admin role...');
-  const adminRole = await prisma.role.upsert({
-    where: { name: 'admin' },
-    update: {},
-    create: {
-      name: 'admin',
-      description: 'Administrator role with full access'
-    }
-  });
+  const adminRole = await prisma.role.findFirst({ where: { name: 'ADMIN' } });
 
-  // Create user role
-  console.log('Creating user role...');
-  const userRole = await prisma.role.upsert({
-    where: { name: 'user' },
-    update: {},
-    create: {
-      name: 'user',
-      description: 'Regular user role with limited access'
-    }
-  });
-
-  // Assign all permissions to admin role
-  console.log('Assigning permissions to admin role...');
-  const allPermissions = await prisma.permission.findMany();
-  for (const permission of allPermissions) {
+  for (const permission of permissions) {
+    console.log(`Assigning ${permission.description} to admin role...`);
     await prisma.rolePermission.upsert({
       where: {
         roleId_permissionId: {
@@ -123,62 +221,10 @@ async function main() {
         }
       },
       update: {},
-      create: {
-        roleId: adminRole.id,
-        permissionId: permission.id
-      }
+      create: { roleId: adminRole.id, permissionId: permission.id }
     });
   }
 
-  // Create admin user
-  console.log('Creating admin user...');
-  const salt = await bcrypt.genSalt();
-  const hashedPassword = await bcrypt.hash('Sota@123', salt);
-
-  const admin = await prisma.user.upsert({
-    where: { email: 'admin@sota.com' },
-    update: {},
-    create: {
-      username: 'admin',
-      email: 'admin@sota.com',
-      password: hashedPassword,
-      salt,
-      name: 'Administrator',
-      address: 'System',
-      contact: '+1234567890',
-      avatar: '',
-      status: UserStatus.ACTIVE,
-      token: '',
-      isTwoFAEnabled: false,
-      roleId: adminRole.id
-    }
-  });
-
-  // Create test user
-  console.log('Creating test user...');
-  const testSalt = await bcrypt.genSalt();
-  const testHashedPassword = await bcrypt.hash('Sota@123', testSalt);
-
-  const user = await prisma.user.upsert({
-    where: { email: 'user@sota.com' },
-    update: {},
-    create: {
-      username: 'testuser',
-      email: 'user@sota.com',
-      password: testHashedPassword,
-      salt: testSalt,
-      name: 'Test User',
-      address: 'Test Address',
-      contact: '+9876543210',
-      avatar: '',
-      status: UserStatus.ACTIVE,
-      token: '',
-      isTwoFAEnabled: false,
-      roleId: userRole.id
-    }
-  });
-
-  // Create default email templates
   console.log('Creating default email templates...');
   const emailTemplates = [
     {

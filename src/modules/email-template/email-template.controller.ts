@@ -7,7 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
-  Put,
+  Patch,
   Query,
   UseGuards
 } from '@nestjs/common';
@@ -52,7 +52,7 @@ export class EmailTemplateController {
     return this.emailTemplateService.findOne(+id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   update(
     @Param('id')
     id: string,

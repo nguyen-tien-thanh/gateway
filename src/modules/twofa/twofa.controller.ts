@@ -4,7 +4,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Put,
+  Patch,
   Req,
   Res,
   UnauthorizedException,
@@ -83,7 +83,7 @@ export class TwofaController {
     return response.status(HttpStatus.NO_CONTENT).json({});
   }
 
-  @Put()
+  @Patch()
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard)
   async toggleTwoFa(

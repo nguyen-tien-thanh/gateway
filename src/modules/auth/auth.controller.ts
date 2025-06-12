@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -19,7 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import * as UAParser from 'ua-parser-js';
-import { RefreshToken } from '@prisma/client';
+import { RefreshToken, UserStatus } from '@prisma/client';
 
 import { AuthService } from 'src/modules/auth/auth.service';
 import { ChangePasswordDto } from 'src/modules/auth/dto/change-password.dto';
@@ -30,16 +31,16 @@ import { ResetPasswordDto } from 'src/modules/auth/dto/reset-password.dto';
 import { UpdateUserDto } from 'src/modules/auth/dto/update-user.dto';
 import { UpdateUserProfileDto } from 'src/modules/auth/dto/update-user-profile.dto';
 import { UserLoginDto } from 'src/modules/auth/dto/user-login.dto';
-import { UserSearchFilterDto } from 'src/modules/auth/dto/user-search-filter.dto';
 import { UserSerializer } from 'src/modules/auth/serializer/user.serializer';
 import { multerOptionsHelper } from 'src/common/helper/multer-options.helper';
 import { PermissionGuard } from 'src/common/guard/permission.guard';
 import { JwtTwoFactorGuard } from 'src/common/guard/jwt-two-factor.guard';
 import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { Pagination } from 'src/shared/paginate';
-import { RefreshPaginateFilterDto } from 'src/modules/refresh-token/dto/refresh-paginate-filter.dto';
 import { RefreshTokenSerializer } from 'src/modules/refresh-token/serializer/refresh-token.serializer';
 import { UserWithRole } from 'src/modules/auth/models/user.model';
+import { Filter } from 'src/common/decorators/filter.decorator';
+import { IFilter } from 'src/common/decorators/filter.decorator';
 
 @ApiTags('Authentication')
 @ApiBearerAuth()
@@ -61,10 +62,10 @@ export class AuthController {
       address: '',
       contact: '',
       avatar: '',
-      status: 'INACTIVE' as any,
+      status: 'ACTIVE' as UserStatus,
       token: '',
       salt: '', // Will be generated in service
-      role: { connect: { id: 2 } } // Default user role
+      role: { connect: { id: 6 } } // Default user role
     };
     return this.authService.create(userCreateInput);
   }
@@ -187,11 +188,8 @@ export class AuthController {
 
   @UseGuards(JwtTwoFactorGuard, PermissionGuard)
   @Get('/users')
-  findAll(
-    @Query()
-    userSearchFilterDto: UserSearchFilterDto
-  ): Promise<Pagination<UserSerializer>> {
-    return this.authService.findAll(userSearchFilterDto);
+  findAll(@Filter() filter?: IFilter): Promise<Pagination<UserSerializer>> {
+    return this.authService.findAll(filter);
   }
 
   @UseGuards(JwtTwoFactorGuard, PermissionGuard)
@@ -204,12 +202,12 @@ export class AuthController {
     const userCreateInput = {
       username: createUserDto.username,
       email: createUserDto.email,
-      password: 'temp123!', // Temporary password, user will set via email
+      password: 'Sota@123', // Temporary password, user will set via email
       name: createUserDto.name,
       address: '',
       contact: '',
       avatar: '',
-      status: createUserDto.status as any,
+      status: createUserDto.status as UserStatus,
       token: '',
       salt: '', // Will be generated in service
       role: { connect: { id: createUserDto.roleId } }
@@ -218,7 +216,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtTwoFactorGuard, PermissionGuard)
-  @Put('/users/:id')
+  @Patch('/users/:id')
   update(
     @Param('id')
     id: string,
@@ -271,10 +269,8 @@ export class AuthController {
   @UseGuards(JwtTwoFactorGuard)
   @Get('/auth/token-info')
   getRefreshToken(
-    @Query()
-    filter: RefreshPaginateFilterDto,
-    @GetUser()
-    user: UserWithRole
+    @GetUser() user: UserWithRole,
+    @Filter() filter: IFilter
   ): Promise<Pagination<RefreshTokenSerializer>> {
     return this.authService.activeRefreshTokenList(+user.id, filter);
   }

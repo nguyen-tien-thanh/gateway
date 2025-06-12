@@ -5,10 +5,10 @@ import { NotFoundException } from 'src/common/exception/not-found.exception';
 import { CreateRoleDto } from 'src/modules/role/dto/create-role.dto';
 import { UpdateRoleDto } from 'src/modules/role/dto/update-role.dto';
 import { PrismaService } from 'src/shared/prisma/prisma.service';
-import { RoleFilterDto } from 'src/modules/role/dto/role-filter.dto';
 import { Pagination } from 'src/shared/paginate';
 import { RoleSerializer } from 'src/modules/role/serializer/role.serializer';
 import { ValidationPayloadInterface } from 'src/common/interfaces/validation-error.interface';
+import { IFilter } from 'src/common/decorators/filter.decorator';
 
 export type RoleWithPermissions = {
   id: number;
@@ -64,44 +64,34 @@ export class RolesService {
    * Get paginated roles list
    * @param filter
    */
-  async findAll(filter: RoleFilterDto): Promise<Pagination<RoleSerializer>> {
-    const { page = 1, limit = 10, keywords } = filter;
-    const skip = (page - 1) * limit;
+  async findAll(filter: IFilter): Promise<Pagination<RoleSerializer>> {
+    const { take = 10, skip = 0, where } = filter;
 
-    const where: Prisma.RoleWhereInput = {};
-    if (keywords) {
-      where.OR = [
-        { name: { contains: keywords } },
-        { description: { contains: keywords } }
-      ];
-    }
+    const whereConditions: Prisma.RoleWhereInput = where || {};
 
     const [roles, total] = await Promise.all([
       this.prisma.role.findMany({
-        skip,
-        take: limit,
-        where,
-        orderBy: { createdAt: 'desc' },
         include: {
           permissions: {
             include: {
               permission: true
             }
           }
-        }
+        },
+        ...filter
       }),
-      this.prisma.role.count({ where })
+      this.prisma.role.count({ where: whereConditions })
     ]);
 
     const serializedRoles = roles.map((role) => this.transformRole(role));
 
     return new Pagination({
       results: serializedRoles,
-      currentPage: page,
-      pageSize: limit,
+      currentPage: skip,
+      pageSize: take,
       totalItems: total,
-      next: page < Math.ceil(total / limit) ? page + 1 : null,
-      previous: page > 1 ? page - 1 : null
+      next: skip < Math.ceil(total / take) ? skip + 1 : null,
+      previous: skip > 1 ? skip - 1 : null
     });
   }
 

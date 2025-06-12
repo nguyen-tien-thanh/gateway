@@ -6,21 +6,21 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
-  Put,
-  Query,
   UseGuards
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { RolesService } from 'src/modules/role/roles.service';
 import { CreateRoleDto } from 'src/modules/role/dto/create-role.dto';
 import { UpdateRoleDto } from 'src/modules/role/dto/update-role.dto';
-import { RoleFilterDto } from 'src/modules/role/dto/role-filter.dto';
 import { RoleSerializer } from 'src/modules/role/serializer/role.serializer';
 import { Pagination } from 'src/shared/paginate';
 import { PermissionGuard } from 'src/common/guard/permission.guard';
 import { JwtTwoFactorGuard } from 'src/common/guard/jwt-two-factor.guard';
+import { IFilter } from 'src/common/decorators/filter.decorator';
+import { Filter } from 'src/common/decorators/filter.decorator';
 
 @ApiTags('roles')
 @UseGuards(JwtTwoFactorGuard, PermissionGuard)
@@ -38,14 +38,8 @@ export class RolesController {
   }
 
   @Get()
-  @ApiQuery({
-    type: RoleFilterDto
-  })
-  findAll(
-    @Query()
-    roleFilterDto: RoleFilterDto
-  ): Promise<Pagination<RoleSerializer>> {
-    return this.rolesService.findAll(roleFilterDto);
+  findAll(@Filter() filter: IFilter): Promise<Pagination<RoleSerializer>> {
+    return this.rolesService.findAll(filter);
   }
 
   @Get(':id')
@@ -56,7 +50,7 @@ export class RolesController {
     return this.rolesService.findOne(+id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   update(
     @Param('id')
     id: string,

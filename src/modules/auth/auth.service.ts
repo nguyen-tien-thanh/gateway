@@ -35,6 +35,7 @@ import { PrismaService } from 'src/shared/prisma/prisma.service';
 import { ValidationPayloadInterface } from 'src/common/interfaces/validation-error.interface';
 import { RefreshPaginateFilterDto } from 'src/modules/refresh-token/dto/refresh-paginate-filter.dto';
 import { RefreshTokenSerializer } from 'src/modules/refresh-token/serializer/refresh-token.serializer';
+import { IFilter } from 'src/common/decorators/filter.decorator';
 
 const isSameSite = process.env.IS_SAME_SITE === 'true';
 const BASE_OPTIONS: SignOptions = {
@@ -74,7 +75,9 @@ export class AuthService {
       slug,
       context: {
         email: user.email,
-        link: `<a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/${url}">${linkLabel} →</a>`,
+        link: `<a href="${
+          process.env.FRONTEND_URL || 'http://localhost:3000'
+        }/${url}">${linkLabel} →</a>`,
         username: user.username,
         subject
       }
@@ -170,7 +173,8 @@ export class AuthService {
     // Check if user is already blocked
     if (
       resUsernameAndIP !== null &&
-      resUsernameAndIP.consumedPoints > (Number(process.env.THROTTLE_LOGIN_LIMIT) || 5)
+      resUsernameAndIP.consumedPoints >
+        (Number(process.env.THROTTLE_LOGIN_LIMIT) || 5)
     ) {
       retrySecs = Math.round(resUsernameAndIP.msBeforeNext / 1000) || 1;
     }
@@ -298,7 +302,10 @@ export class AuthService {
    * @param user
    * @param twoFactor
    */
-  public async generateAccessToken(user: UserSerializer, twoFactor = false): Promise<string> {
+  public async generateAccessToken(
+    user: UserSerializer,
+    twoFactor = false
+  ): Promise<string> {
     const opts: SignOptions = {
       ...BASE_OPTIONS,
       subject: String(user.id)
@@ -366,37 +373,28 @@ export class AuthService {
    * Get all user paginated
    * @param userSearchFilterDto
    */
-  async findAll(
-    userSearchFilterDto: UserSearchFilterDto
-  ): Promise<Pagination<UserSerializer>> {
-    const { page = 1, limit = 10 } = userSearchFilterDto;
-    const skip = (page - 1) * limit;
+  async findAll(filter: IFilter): Promise<Pagination<UserSerializer>> {
+    const { take = 10, skip = 0, where } = filter;
 
-    const where: Prisma.UserWhereInput = {};
-    // Add search functionality if needed based on DTO structure
+    const whereConditions: Prisma.UserWhereInput = where || {};
 
     const [users, total] = await Promise.all([
       this.prisma.user.findMany({
-        skip,
-        take: limit,
-        where,
-        include: {
-          role: true
-        },
-        orderBy: { createdAt: 'desc' }
+        include: { role: true },
+        ...filter
       }),
-      this.prisma.user.count({ where })
+      this.prisma.user.count({ where: whereConditions })
     ]);
 
     const serializedUsers = users.map((user) => this.transformUser(user));
 
     return new Pagination({
       results: serializedUsers,
-      currentPage: page,
-      pageSize: limit,
+      currentPage: skip,
+      pageSize: take,
       totalItems: total,
-      next: page < Math.ceil(total / limit) ? page + 1 : null,
-      previous: page > 1 ? page - 1 : null
+      next: skip < Math.ceil(total / take) ? skip + 1 : null,
+      previous: skip > 1 ? skip - 1 : null
     });
   }
 
@@ -700,7 +698,8 @@ export class AuthService {
       isSameSite ? 'Strict' : 'None'
     }; Path=/; Max-Age=${expiredAt}; ${isSecure ? 'Secure' : ''}`;
     if (refreshToken) {
-      const refreshExpiredAt = Number(process.env.JWT_REFRESH_EXPIRES_IN) || 604800;
+      const refreshExpiredAt =
+        Number(process.env.JWT_REFRESH_EXPIRES_IN) || 604800;
       const refreshCookie = `Refresh=${refreshToken}; HttpOnly; SameSite=${
         isSameSite ? 'Strict' : 'None'
       }; Path=/; Max-Age=${refreshExpiredAt}; ${isSecure ? 'Secure' : ''}`;
@@ -743,7 +742,7 @@ export class AuthService {
    **/
   activeRefreshTokenList(
     userId: number,
-    filter: RefreshPaginateFilterDto
+    filter: IFilter
   ): Promise<Pagination<RefreshTokenSerializer>> {
     return this.refreshTokenService.getRefreshTokenByUserId(userId, filter);
   }

@@ -13,7 +13,7 @@ export class JwtTwoFactorStrategy extends PassportStrategy(
   constructor(private readonly prisma: PrismaService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        // ExtractJwt.fromAuthHeaderAsBearerToken(),
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
         (request) => request?.cookies?.Authentication
       ]),
       ignoreExpiration: false,

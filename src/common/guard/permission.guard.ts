@@ -54,7 +54,7 @@ export class PermissionGuard implements CanActivate {
 
     if (!user?.role) return false;
 
-    if (user.role.name === 'admin') return true;
+    if (user.role.name === 'ADMIN') return true;
 
     return (
       user.role.permissions?.some((permission) => {

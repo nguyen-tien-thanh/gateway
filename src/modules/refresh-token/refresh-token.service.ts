@@ -12,9 +12,9 @@ import { ForbiddenException } from 'src/common/exception/forbidden.exception';
 import { NotFoundException } from 'src/common/exception/not-found.exception';
 import { RefreshTokenInterface } from 'src/modules/refresh-token/interface/refresh-token.interface';
 import { PrismaService } from 'src/shared/prisma/prisma.service';
-import { RefreshPaginateFilterDto } from 'src/modules/refresh-token/dto/refresh-paginate-filter.dto';
 import { RefreshTokenSerializer } from 'src/modules/refresh-token/serializer/refresh-token.serializer';
 import { Pagination } from 'src/shared/paginate';
+import { IFilter } from 'src/common/decorators/filter.decorator';
 
 const BASE_OPTIONS: SignOptions = {
   issuer: process.env.APP_URL || 'http://localhost:7777',
@@ -71,7 +71,10 @@ export class RefreshTokenService {
       isRevoked: false,
       expires:
         refreshToken.expires ||
-        new Date(Date.now() + (Number(process.env.JWT_REFRESH_EXPIRES_IN) || 604800) * 1000),
+        new Date(
+          Date.now() +
+            (Number(process.env.JWT_REFRESH_EXPIRES_IN) || 604800) * 1000
+        ),
       user: { connect: { id: user.id } }
     };
 
@@ -206,12 +209,18 @@ export class RefreshTokenService {
    */
   async getRefreshTokenByUserId(
     userId: number,
-    filter: RefreshPaginateFilterDto
+    filter: IFilter
   ): Promise<Pagination<RefreshTokenSerializer>> {
-    const { page = 1, limit = 10 } = filter;
-    const skip = (page - 1) * limit;
+    const {
+      take = 10,
+      skip = 0,
+      where,
+      include,
+      orderBy,
+      select
+    } = filter || {};
 
-    const where: Prisma.RefreshTokenWhereInput = {
+    const whereConditions: Prisma.RefreshTokenWhereInput = {
       userId,
       isRevoked: false,
       expires: { gte: new Date() }
@@ -220,12 +229,12 @@ export class RefreshTokenService {
     const [results, total] = await Promise.all([
       this.prisma.refreshToken.findMany({
         skip,
-        take: limit,
-        where,
+        take,
+        where: whereConditions,
         orderBy: { id: 'desc' },
         include: { user: true }
       }),
-      this.prisma.refreshToken.count({ where })
+      this.prisma.refreshToken.count({ where: whereConditions })
     ]);
 
     const serializedResults = results.map((token) =>
@@ -235,10 +244,10 @@ export class RefreshTokenService {
     return new Pagination<RefreshTokenSerializer>({
       results: serializedResults,
       totalItems: total,
-      pageSize: limit,
-      currentPage: page,
-      previous: page > 1 ? page - 1 : null,
-      next: page < Math.ceil(total / limit) ? page + 1 : null
+      pageSize: take,
+      currentPage: skip,
+      previous: skip > 1 ? skip - 1 : null,
+      next: skip < Math.ceil(total / take) ? skip + 1 : null
     });
   }
 
