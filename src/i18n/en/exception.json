@@ -17,5 +17,6 @@
   "invalidRefreshToken": "Invalid refresh token!",
   "deleteDefaultError": "Cannot delete default item!",
   "refreshTokenExpired": "Refresh token has expired!",
-  "tooManyTries": "Too many attempts!"
+  "tooManyTries": "Too many attempts!",
+  "Conflict": "User already exists!"
 }

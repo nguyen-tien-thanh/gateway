@@ -22,7 +22,8 @@ export class HouseDto {
   @Type(() => Number)
   @IsInt()
   @IsPositive()
-  ownerId: number;
+  @IsOptional()
+  ownerId?: number;
 
   @IsOptional()
   @IsString()

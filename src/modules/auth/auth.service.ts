@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   HttpStatus,
   Inject,
   Injectable,
@@ -109,7 +110,16 @@ export class AuthService {
     createUserDto.token = token;
 
     const registerProcess = createUserDto.status === UserStatus.INACTIVE;
-    const user = await this.prisma.user.create({ data: createUserDto });
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: createUserDto.email }
+    });
+
+    if (existingUser) throw new ConflictException();
+
+    const user = await this.prisma.user.create({
+      data: createUserDto,
+      include: { role: true }
+    });
 
     // Convert to UserSerializer for email
     const userSerializer = this.transformUser(user);

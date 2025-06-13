@@ -17,5 +17,6 @@
   "invalidRefreshToken": "Mã refresh token không hợp lệ!",
   "deleteDefaultError": "Không thể xóa mục mặc định!",
   "refreshTokenExpired": "Mã refresh token đã hết hạn!",
-  "tooManyTries": "Quá nhiều lần thử!"
+  "tooManyTries": "Quá nhiều lần thử!",
+  "Conflict": "Tài khoản đã tồn tại!"
 }
