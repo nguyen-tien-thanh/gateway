@@ -47,7 +47,7 @@ CREATE TABLE `permission` (
     `description` VARCHAR(191) NOT NULL,
     `path` VARCHAR(191) NOT NULL,
     `method` VARCHAR(191) NOT NULL DEFAULT 'GET',
-    `isDefault` BOOLEAN NOT NULL,
+    `isDefault` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 

@@ -42,6 +42,14 @@ async function main() {
   const permissions = [
     {
       id: 1,
+      resource: '*',
+      description: '*',
+      path: '*',
+      method: '*',
+      isDefault: true
+    },
+    {
+      id: 2,
       resource: 'users',
       description: 'user-index',
       path: '/users',
@@ -49,7 +57,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 2,
+      id: 3,
       resource: 'users',
       description: 'user-show',
       path: '/users/:id',
@@ -57,7 +65,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 3,
+      id: 4,
       resource: 'users',
       description: 'user-store',
       path: '/users',
@@ -65,7 +73,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 4,
+      id: 5,
       resource: 'users',
       description: 'user-update',
       path: '/users/:id',
@@ -73,7 +81,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 5,
+      id: 6,
       resource: 'users',
       description: 'user-delete',
       path: '/users/:id',
@@ -81,7 +89,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 6,
+      id: 7,
       resource: 'roles',
       description: 'role-index',
       path: '/roles',
@@ -89,7 +97,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 7,
+      id: 8,
       resource: 'roles',
       description: 'role-show',
       path: '/roles/:id',
@@ -97,7 +105,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 8,
+      id: 9,
       resource: 'roles',
       description: 'role-store',
       path: '/roles',
@@ -105,7 +113,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 9,
+      id: 10,
       resource: 'roles',
       description: 'role-update',
       path: '/roles/:id',
@@ -113,7 +121,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 10,
+      id: 11,
       resource: 'roles',
       description: 'role-delete',
       path: '/roles/:id',
@@ -122,7 +130,7 @@ async function main() {
     },
     // for permissions
     {
-      id: 11,
+      id: 12,
       resource: 'permissions',
       description: 'permission-index',
       path: '/permissions',
@@ -130,7 +138,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 12,
+      id: 13,
       resource: 'permissions',
       description: 'permission-show',
       path: '/permissions/:id',
@@ -138,7 +146,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 13,
+      id: 14,
       resource: 'permissions',
       description: 'permission-store',
       path: '/permissions',
@@ -146,7 +154,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 14,
+      id: 15,
       resource: 'permissions',
       description: 'permission-update',
       path: '/permissions/:id',
@@ -154,10 +162,50 @@ async function main() {
       isDefault: true
     },
     {
-      id: 15,
+      id: 16,
       resource: 'permissions',
       description: 'permission-delete',
       path: '/permissions/:id',
+      method: 'DELETE',
+      isDefault: true
+    },
+    {
+      id: 17,
+      resource: 'house',
+      description: 'house-index',
+      path: '/house',
+      method: 'GET',
+      isDefault: true
+    },
+    {
+      id: 18,
+      resource: 'house',
+      description: 'house-show',
+      path: '/house/:id',
+      method: 'GET',
+      isDefault: true
+    },
+    {
+      id: 19,
+      resource: 'house',
+      description: 'house-store',
+      path: '/house',
+      method: 'POST',
+      isDefault: true
+    },
+    {
+      id: 20,
+      resource: 'house',
+      description: 'house-update',
+      path: '/house/:id',
+      method: 'PATCH',
+      isDefault: true
+    },
+    {
+      id: 21,
+      resource: 'house',
+      description: 'house-delete',
+      path: '/house/:id',
       method: 'DELETE',
       isDefault: true
     }

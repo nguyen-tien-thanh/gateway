@@ -45,4 +45,4 @@ jobs:
           "cd docker/371 && \
           docker-compose stop gateway && \
           docker-compose pull gateway && \
-          docker-compose up -d gateway" 
+          docker-compose up -d gateway"

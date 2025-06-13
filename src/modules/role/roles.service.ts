@@ -67,8 +67,6 @@ export class RolesService {
   async findAll(filter: IFilter): Promise<Pagination<RoleSerializer>> {
     const { take = 10, skip = 0, where } = filter;
 
-    const whereConditions: Prisma.RoleWhereInput = where || {};
-
     const [roles, total] = await Promise.all([
       this.prisma.role.findMany({
         include: {
@@ -80,7 +78,7 @@ export class RolesService {
         },
         ...filter
       }),
-      this.prisma.role.count({ where: whereConditions })
+      this.prisma.role.count({ where })
     ]);
 
     const serializedRoles = roles.map((role) => this.transformRole(role));

@@ -20,12 +20,7 @@ export class PermissionsService {
     const { take = 10, skip = 0, where } = filter;
 
     const [permissions, total] = await Promise.all([
-      this.prisma.permission.findMany({
-        skip,
-        take,
-        where,
-        ...filter
-      }),
+      this.prisma.permission.findMany({ ...filter }),
       this.prisma.permission.count({ where })
     ]);
 

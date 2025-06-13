@@ -66,6 +66,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.5.5",
     "swagger-ui-express": "^4.3.0",
+    "ts-node": "^10.9.2",
     "ua-parser-js": "^1.0.2",
     "uuid": "^8.3.2"
   },
@@ -88,7 +89,6 @@
     "prisma": "6.8.2",
     "rimraf": "^3.0.2",
     "ts-loader": "^9.2.8",
-    "ts-node": "^10.9.2",
     "tsconfig-paths": "^3.14.0",
     "typescript": "^4.6.2"
   }

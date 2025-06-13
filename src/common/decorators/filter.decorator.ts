@@ -50,7 +50,7 @@ export const Filter = createParamDecorator(
         Reflect.getMetadata(DECORATORS.API_PARAMETERS, target[key]) ?? [];
       const example = `{
   "where": { "field": "value" },
-  "take": 20,
+  "take": 10,
   "skip": 0,
   "include": { "field": true },
   "orderBy": { "field": "asc" },

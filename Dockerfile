@@ -30,4 +30,6 @@ COPY --from=development /usr/src/app/node_modules/.prisma ./node_modules/.prisma
 
 RUN yarn prisma:generate
 
+EXPOSE 3000
+
 CMD ["yarn", "start:prod"]
