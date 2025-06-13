@@ -817,4 +817,11 @@ export class AuthService {
   async getRefreshTokenGroupedData(field: string) {
     return this.refreshTokenService.getRefreshTokenGroupedData(field);
   }
+
+  async delete(id: number): Promise<void> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException();
+    await this.prisma.refreshToken.deleteMany({ where: { userId: id } });
+    await this.prisma.user.delete({ where: { id } });
+  }
 }

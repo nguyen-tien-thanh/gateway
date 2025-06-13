@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -273,6 +274,13 @@ export class AuthController {
     @Filter() filter: IFilter
   ): Promise<Pagination<RefreshTokenSerializer>> {
     return this.authService.activeRefreshTokenList(+user.id, filter);
+  }
+
+  @UseGuards(JwtTwoFactorGuard, PermissionGuard)
+  @Delete('/users/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  delete(@Param('id') id: string): Promise<void> {
+    return this.authService.delete(+id);
   }
 
   @UseGuards(JwtTwoFactorGuard)
