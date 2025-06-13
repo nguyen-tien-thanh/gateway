@@ -13,13 +13,11 @@ const statusEnumArray = [
 /**
  * create user data transform object
  */
-export class CreateUserDto extends OmitType(RegisterUserDto, [
-  'password'
-] as const) {
+export class CreateUserDto extends OmitType(RegisterUserDto, [] as const) {
   @IsIn(statusEnumArray, {
     message: `isIn-{"items":"${statusEnumArray.join(',')}"}`
   })
-  status: UserStatusEnum;
+  status?: UserStatusEnum;
 
   @IsNumber()
   roleId: number;

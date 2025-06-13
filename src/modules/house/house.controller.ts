@@ -28,7 +28,11 @@ export class HouseController {
     @Body() createHouseDto: CreateHouseDto,
     @GetUser() user: UserWithRole
   ) {
-    return this.houseService.create({ ...createHouseDto, createdBy: user.id });
+    return this.houseService.create({
+      ownerId: user.id,
+      ...createHouseDto,
+      createdBy: user.id
+    });
   }
 
   @UseGuards(JwtTwoFactorGuard, PermissionGuard)

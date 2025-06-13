@@ -199,16 +199,17 @@ export class AuthController {
     @Body(ValidationPipe)
     createUserDto: CreateUserDto
   ): Promise<UserSerializer> {
+    // hash password
     // Convert DTO to Prisma UserCreateInput
     const userCreateInput = {
       username: createUserDto.username,
       email: createUserDto.email,
-      password: 'Sota@123', // Temporary password, user will set via email
+      password: createUserDto.password || 'Sota@123',
       name: createUserDto.name,
       address: '',
       contact: '',
       avatar: '',
-      status: createUserDto.status as UserStatus,
+      status: createUserDto.status || ('ACTIVE' as UserStatus),
       token: '',
       salt: '', // Will be generated in service
       role: { connect: { id: createUserDto.roleId } }
