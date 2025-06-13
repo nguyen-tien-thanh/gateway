@@ -128,7 +128,6 @@ async function main() {
       method: 'DELETE',
       isDefault: true
     },
-    // for permissions
     {
       id: 12,
       resource: 'permissions',
@@ -206,6 +205,130 @@ async function main() {
       resource: 'house',
       description: 'house-delete',
       path: '/house/:id',
+      method: 'DELETE',
+      isDefault: true
+    },
+    {
+      id: 22,
+      resource: 'room',
+      description: 'room-index',
+      path: '/room',
+      method: 'GET',
+      isDefault: true
+    },
+    {
+      id: 23,
+      resource: 'room',
+      description: 'room-show',
+      path: '/room/:id',
+      method: 'GET',
+      isDefault: true
+    },
+    {
+      id: 24,
+      resource: 'room',
+      description: 'room-store',
+      path: '/room',
+      method: 'POST',
+      isDefault: true
+    },
+    {
+      id: 25,
+      resource: 'room',
+      description: 'room-update',
+      path: '/room/:id',
+      method: 'PATCH',
+      isDefault: true
+    },
+    {
+      id: 26,
+      resource: 'room',
+      description: 'room-delete',
+      path: '/room/:id',
+      method: 'DELETE',
+      isDefault: true
+    },
+    //
+
+    {
+      id: 22,
+      resource: 'asset',
+      description: 'asset-index',
+      path: '/asset',
+      method: 'GET',
+      isDefault: true
+    },
+    {
+      id: 23,
+      resource: 'asset',
+      description: 'asset-show',
+      path: '/asset/:id',
+      method: 'GET',
+      isDefault: true
+    },
+    {
+      id: 24,
+      resource: 'asset',
+      description: 'asset-store',
+      path: '/asset',
+      method: 'POST',
+      isDefault: true
+    },
+    {
+      id: 25,
+      resource: 'asset',
+      description: 'asset-update',
+      path: '/asset/:id',
+      method: 'PATCH',
+      isDefault: true
+    },
+    {
+      id: 26,
+      resource: 'asset',
+      description: 'asset-delete',
+      path: '/asset/:id',
+      method: 'DELETE',
+      isDefault: true
+    },
+    //
+
+    {
+      id: 27,
+      resource: 'asset-category',
+      description: 'asset-category-index',
+      path: '/asset-category',
+      method: 'GET',
+      isDefault: true
+    },
+    {
+      id: 28,
+      resource: 'asset-category',
+      description: 'asset-category-show',
+      path: '/asset-category/:id',
+      method: 'GET',
+      isDefault: true
+    },
+    {
+      id: 29,
+      resource: 'asset-category',
+      description: 'asset-category-store',
+      path: '/asset-category',
+      method: 'POST',
+      isDefault: true
+    },
+    {
+      id: 30,
+      resource: 'asset-category',
+      description: 'asset-category-update',
+      path: '/asset-category/:id',
+      method: 'PATCH',
+      isDefault: true
+    },
+    {
+      id: 31,
+      resource: 'asset-category',
+      description: 'asset-category-delete',
+      path: '/asset-category/:id',
       method: 'DELETE',
       isDefault: true
     }

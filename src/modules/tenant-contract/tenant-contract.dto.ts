@@ -3,7 +3,6 @@ import {
   IsNumber,
   IsEnum,
   IsOptional,
-  IsDecimal,
   IsDate
 } from 'class-validator';
 
@@ -21,10 +20,10 @@ export class CreateTenantContractDto {
   @IsNumber()
   roomId: number;
 
-  @IsDecimal()
+  @IsNumber()
   monthlyRent: number;
 
-  @IsDecimal()
+  @IsNumber()
   deposit: number;
 
   @IsDate()
@@ -47,11 +46,11 @@ export class CreateTenantContractDto {
 }
 
 export class UpdateTenantContractDto {
-  @IsDecimal()
+  @IsNumber()
   @IsOptional()
   monthlyRent?: number;
 
-  @IsDecimal()
+  @IsNumber()
   @IsOptional()
   deposit?: number;
 

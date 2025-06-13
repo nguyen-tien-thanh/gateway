@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsNumber,
-  IsEnum,
-  IsOptional,
-  IsDecimal
-} from 'class-validator';
+import { IsString, IsNumber, IsEnum, IsOptional } from 'class-validator';
 
 enum AssetCondition {
   NEW = 'NEW',
@@ -24,7 +18,7 @@ export class CreateAssetDto {
   @IsEnum(AssetCondition)
   condition: AssetCondition;
 
-  @IsDecimal()
+  @IsNumber()
   value: number;
 
   @IsString()
@@ -49,7 +43,7 @@ export class UpdateAssetDto {
   @IsOptional()
   condition?: AssetCondition;
 
-  @IsDecimal()
+  @IsNumber()
   @IsOptional()
   value?: number;
 

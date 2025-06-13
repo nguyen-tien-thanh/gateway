@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsNumber,
-  IsEnum,
-  IsOptional,
-  IsDecimal
-} from 'class-validator';
+import { IsString, IsNumber, IsEnum, IsOptional } from 'class-validator';
 
 export enum RoomStatus {
   AVAILABLE = 'AVAILABLE',
@@ -20,10 +14,10 @@ export class CreateRoomDto {
   @IsString()
   roomNumber: string;
 
-  @IsDecimal()
+  @IsNumber()
   area: number;
 
-  @IsDecimal()
+  @IsNumber()
   baseRent: number;
 
   @IsEnum(RoomStatus)
@@ -51,11 +45,11 @@ export class UpdateRoomDto {
   @IsOptional()
   roomNumber?: string;
 
-  @IsDecimal()
+  @IsNumber()
   @IsOptional()
   area?: number;
 
-  @IsDecimal()
+  @IsNumber()
   @IsOptional()
   baseRent?: number;
 

@@ -3,7 +3,6 @@ import {
   IsNumber,
   IsEnum,
   IsOptional,
-  IsDecimal,
   IsDate
 } from 'class-validator';
 
@@ -46,7 +45,7 @@ export class CreateMaintenanceDto {
   @IsOptional()
   status?: MaintenanceStatus;
 
-  @IsDecimal()
+  @IsNumber()
   @IsOptional()
   cost?: number;
 
@@ -80,7 +79,7 @@ export class UpdateMaintenanceDto {
   @IsOptional()
   status?: MaintenanceStatus;
 
-  @IsDecimal()
+  @IsNumber()
   @IsOptional()
   cost?: number;
 
