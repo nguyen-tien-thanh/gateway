@@ -61,7 +61,7 @@ model Permission {
   description String   @unique
   path        String
   method      String   @default("GET")
-  isDefault   Boolean  @default(false)
+  isDefault   Boolean? @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class PermissionDto {
   @ApiProperty()
@@ -23,9 +23,9 @@ export class PermissionDto {
   method: string;
 
   @ApiPropertyOptional()
-  //   @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
-  isDefault: boolean;
+  isDefault?: boolean;
 }
 export class CreatePermissionDto extends PermissionDto {}
 
