@@ -251,7 +251,7 @@ async function main() {
     //
 
     {
-      id: 22,
+      id: 27,
       resource: 'asset',
       description: 'asset-index',
       path: '/asset',
@@ -259,7 +259,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 23,
+      id: 28,
       resource: 'asset',
       description: 'asset-show',
       path: '/asset/:id',
@@ -267,7 +267,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 24,
+      id: 29,
       resource: 'asset',
       description: 'asset-store',
       path: '/asset',
@@ -275,7 +275,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 25,
+      id: 30,
       resource: 'asset',
       description: 'asset-update',
       path: '/asset/:id',
@@ -283,7 +283,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 26,
+      id: 31,
       resource: 'asset',
       description: 'asset-delete',
       path: '/asset/:id',
@@ -293,7 +293,7 @@ async function main() {
     //
 
     {
-      id: 27,
+      id: 32,
       resource: 'asset-category',
       description: 'asset-category-index',
       path: '/asset-category',
@@ -301,7 +301,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 28,
+      id: 33,
       resource: 'asset-category',
       description: 'asset-category-show',
       path: '/asset-category/:id',
@@ -309,7 +309,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 29,
+      id: 34,
       resource: 'asset-category',
       description: 'asset-category-store',
       path: '/asset-category',
@@ -317,7 +317,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 30,
+      id: 35,
       resource: 'asset-category',
       description: 'asset-category-update',
       path: '/asset-category/:id',
@@ -325,7 +325,7 @@ async function main() {
       isDefault: true
     },
     {
-      id: 31,
+      id: 36,
       resource: 'asset-category',
       description: 'asset-category-delete',
       path: '/asset-category/:id',
