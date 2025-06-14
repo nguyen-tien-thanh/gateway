@@ -41,7 +41,6 @@ async function main() {
 
   const permissions = [
     {
-      id: 1,
       resource: '*',
       description: '*',
       path: '*',
@@ -49,7 +48,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 2,
       resource: 'users',
       description: 'user-index',
       path: '/users',
@@ -57,7 +55,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 3,
       resource: 'users',
       description: 'user-show',
       path: '/users/:id',
@@ -65,7 +62,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 4,
       resource: 'users',
       description: 'user-store',
       path: '/users',
@@ -73,7 +69,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 5,
       resource: 'users',
       description: 'user-update',
       path: '/users/:id',
@@ -81,7 +76,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 6,
       resource: 'users',
       description: 'user-delete',
       path: '/users/:id',
@@ -89,7 +83,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 7,
       resource: 'roles',
       description: 'role-index',
       path: '/roles',
@@ -97,7 +90,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 8,
       resource: 'roles',
       description: 'role-show',
       path: '/roles/:id',
@@ -105,7 +97,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 9,
       resource: 'roles',
       description: 'role-store',
       path: '/roles',
@@ -113,7 +104,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 10,
       resource: 'roles',
       description: 'role-update',
       path: '/roles/:id',
@@ -121,7 +111,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 11,
       resource: 'roles',
       description: 'role-delete',
       path: '/roles/:id',
@@ -129,7 +118,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 12,
       resource: 'permissions',
       description: 'permission-index',
       path: '/permissions',
@@ -137,7 +125,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 13,
       resource: 'permissions',
       description: 'permission-show',
       path: '/permissions/:id',
@@ -145,7 +132,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 14,
       resource: 'permissions',
       description: 'permission-store',
       path: '/permissions',
@@ -153,7 +139,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 15,
       resource: 'permissions',
       description: 'permission-update',
       path: '/permissions/:id',
@@ -161,7 +146,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 16,
       resource: 'permissions',
       description: 'permission-delete',
       path: '/permissions/:id',
@@ -169,7 +153,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 17,
       resource: 'house',
       description: 'house-index',
       path: '/house',
@@ -177,7 +160,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 18,
       resource: 'house',
       description: 'house-show',
       path: '/house/:id',
@@ -185,7 +167,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 19,
       resource: 'house',
       description: 'house-store',
       path: '/house',
@@ -193,7 +174,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 20,
       resource: 'house',
       description: 'house-update',
       path: '/house/:id',
@@ -201,7 +181,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 21,
       resource: 'house',
       description: 'house-delete',
       path: '/house/:id',
@@ -209,7 +188,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 22,
       resource: 'room',
       description: 'room-index',
       path: '/room',
@@ -217,7 +195,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 23,
       resource: 'room',
       description: 'room-show',
       path: '/room/:id',
@@ -225,7 +202,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 24,
       resource: 'room',
       description: 'room-store',
       path: '/room',
@@ -233,7 +209,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 25,
       resource: 'room',
       description: 'room-update',
       path: '/room/:id',
@@ -241,7 +216,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 26,
       resource: 'room',
       description: 'room-delete',
       path: '/room/:id',
@@ -251,7 +225,6 @@ async function main() {
     //
 
     {
-      id: 27,
       resource: 'asset',
       description: 'asset-index',
       path: '/asset',
@@ -259,7 +232,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 28,
       resource: 'asset',
       description: 'asset-show',
       path: '/asset/:id',
@@ -267,7 +239,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 29,
       resource: 'asset',
       description: 'asset-store',
       path: '/asset',
@@ -275,7 +246,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 30,
       resource: 'asset',
       description: 'asset-update',
       path: '/asset/:id',
@@ -283,7 +253,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 31,
       resource: 'asset',
       description: 'asset-delete',
       path: '/asset/:id',
@@ -293,7 +262,6 @@ async function main() {
     //
 
     {
-      id: 32,
       resource: 'asset-category',
       description: 'asset-category-index',
       path: '/asset-category',
@@ -301,7 +269,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 33,
       resource: 'asset-category',
       description: 'asset-category-show',
       path: '/asset-category/:id',
@@ -309,7 +276,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 34,
       resource: 'asset-category',
       description: 'asset-category-store',
       path: '/asset-category',
@@ -317,7 +283,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 35,
       resource: 'asset-category',
       description: 'asset-category-update',
       path: '/asset-category/:id',
@@ -325,7 +290,6 @@ async function main() {
       isDefault: true
     },
     {
-      id: 36,
       resource: 'asset-category',
       description: 'asset-category-delete',
       path: '/asset-category/:id',
@@ -334,6 +298,7 @@ async function main() {
     }
   ];
 
+  // Create roles first
   for (const roleData of roles) {
     console.log(`Creating role ${roleData.name}...`);
     const role = await prisma.role.upsert({
@@ -342,6 +307,7 @@ async function main() {
       create: roleData
     });
 
+    // Create default user for each role
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash('Sota@123', salt);
     const dump = role.name.toLowerCase();
@@ -371,18 +337,21 @@ async function main() {
     });
   }
 
+  const adminRole = await prisma.role.findFirst({ where: { name: 'ADMIN' } });
+  const ownerRole = await prisma.role.findFirst({ where: { name: 'OWNER' } });
+  const staffRole = await prisma.role.findFirst({ where: { name: 'STAFF' } });
+  const partRole = await prisma.role.findFirst({ where: { name: 'PARTNER' } });
+  const tenantRole = await prisma.role.findFirst({ where: { name: 'TENANT' } });
+  const userRole = await prisma.role.findFirst({ where: { name: 'USER' } });
+
   for (const permissionData of permissions) {
     console.log(`Creating permission ${permissionData.description}...`);
-    await prisma.permission.upsert({
+    const permission = await prisma.permission.upsert({
       where: { description: permissionData.description },
       update: {},
       create: permissionData
     });
-  }
 
-  const adminRole = await prisma.role.findFirst({ where: { name: 'ADMIN' } });
-
-  for (const permission of permissions) {
     console.log(`Assigning ${permission.description} to admin role...`);
     await prisma.rolePermission.upsert({
       where: {
@@ -394,6 +363,87 @@ async function main() {
       update: {},
       create: { roleId: adminRole.id, permissionId: permission.id }
     });
+
+    if (
+      !permission.resource.includes('*') &&
+      !permission.resource.includes('house')
+    ) {
+      console.log(`Assigning ${permission.resource} to owner role...`);
+      await prisma.rolePermission.upsert({
+        where: {
+          roleId_permissionId: {
+            roleId: ownerRole.id,
+            permissionId: permission.id
+          }
+        },
+        update: {},
+        create: { roleId: ownerRole.id, permissionId: permission.id }
+      });
+    }
+
+    if (
+      !permission.resource.includes('*') &&
+      !permission.resource.includes('house')
+    ) {
+      console.log(`Assigning ${permission.resource} to staff role...`);
+      await prisma.rolePermission.upsert({
+        where: {
+          roleId_permissionId: {
+            roleId: staffRole.id,
+            permissionId: permission.id
+          }
+        },
+        update: {},
+        create: { roleId: staffRole.id, permissionId: permission.id }
+      });
+
+      console.log(`Assigning ${permission.resource} to partner role...`);
+      await prisma.rolePermission.upsert({
+        where: {
+          roleId_permissionId: {
+            roleId: partRole.id,
+            permissionId: permission.id
+          }
+        },
+        update: {},
+        create: { roleId: partRole.id, permissionId: permission.id }
+      });
+    }
+
+    if (
+      permission.resource.includes('tenant') ||
+      permission.resource.includes('contract') ||
+      permission.resource.includes('payment')
+    ) {
+      console.log(`Assigning ${permission.resource} to tenant role...`);
+      await prisma.rolePermission.upsert({
+        where: {
+          roleId_permissionId: {
+            roleId: tenantRole.id,
+            permissionId: permission.id
+          }
+        },
+        update: {},
+        create: { roleId: tenantRole.id, permissionId: permission.id }
+      });
+    }
+
+    if (
+      permission.resource.includes('read') ||
+      permission.resource.includes('view')
+    ) {
+      console.log(`Assigning ${permission.resource} to user role...`);
+      await prisma.rolePermission.upsert({
+        where: {
+          roleId_permissionId: {
+            roleId: userRole.id,
+            permissionId: permission.id
+          }
+        },
+        update: {},
+        create: { roleId: userRole.id, permissionId: permission.id }
+      });
+    }
   }
 
   console.log('Creating default email templates...');
