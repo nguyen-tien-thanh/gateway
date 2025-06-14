@@ -35,6 +35,7 @@ import { AssetCategoryModule } from './modules/asset-category/asset-category.mod
 import { ImageModule } from './modules/image/image.module';
 import { RoomAssetModule } from './modules/room-asset/room-asset.module';
 import { QRCodeModule } from './modules/qr-code/qr-code.module';
+import { ResourceMemberModule } from './modules/resource-member/resource-member.module';
 
 @Module({
   imports: [
@@ -77,7 +78,8 @@ import { QRCodeModule } from './modules/qr-code/qr-code.module';
     AssetCategoryModule,
     ImageModule,
     QRCodeModule,
-    RoomAssetModule
+    RoomAssetModule,
+    ResourceMemberModule
   ],
   providers: [
     {
