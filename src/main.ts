@@ -39,6 +39,7 @@ async function bootstrap() {
     const whitelist = [process.env.FRONTEND_URL || 'http://localhost:3000'];
     app.enableCors({
       origin: function (origin, callback) {
+        console.debug('----------origin: ', origin);
         if (!origin || whitelist.indexOf(origin) !== -1) {
           callback(null, true);
         } else {

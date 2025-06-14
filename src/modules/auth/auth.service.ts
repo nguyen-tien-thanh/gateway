@@ -682,15 +682,16 @@ export class AuthService {
    * get cookie expiry for logout
    */
   getCookieForLogOut(): string[] {
-    const isSecure =
-      process.env.NODE_ENV === 'production' &&
-      process.env.IS_HTTPS_ENABLED === 'true';
-    const authCookie = `Authentication=; HttpOnly; SameSite=${
-      isSameSite ? 'Strict' : 'None'
-    }; Path=/; Max-Age=0; ${isSecure ? 'Secure' : ''}`;
-    const refreshCookie = `Refresh=; HttpOnly; SameSite=${
-      isSameSite ? 'Strict' : 'None'
-    }; Path=/; Max-Age=0; ${isSecure ? 'Secure' : ''}`;
+    const isProduction = process.env.NODE_ENV === 'production';
+    const isSecure = isProduction && process.env.IS_HTTPS_ENABLED === 'true';
+    const sameSite = isProduction ? 'None' : 'Lax';
+
+    const authCookie = `Authentication=; HttpOnly; SameSite=${sameSite}; Path=/; Max-Age=0; ${
+      isSecure ? 'Secure' : ''
+    }`;
+    const refreshCookie = `Refresh=; HttpOnly; SameSite=${sameSite}; Path=/; Max-Age=0; ${
+      isSecure ? 'Secure' : ''
+    }`;
     return [authCookie, refreshCookie];
   }
 
@@ -699,22 +700,45 @@ export class AuthService {
    * @param accessToken
    * @param refreshToken
    */
+  // buildResponsePayload(accessToken: string, refreshToken?: string): string[] {
+  //   const isSecure =
+  //     process.env.NODE_ENV === 'production' &&
+  //     process.env.IS_HTTPS_ENABLED === 'true';
+  //   const expiredAt = Number(process.env.JWT_EXPIRES_IN) || 900;
+  //   const authCookie = `Authentication=${accessToken}; HttpOnly; SameSite=${
+  //     isSameSite ? 'Strict' : 'None'
+  //   }; Path=/; Max-Age=${expiredAt}; ${isSecure ? 'Secure' : ''}`;
+  //   if (refreshToken) {
+  //     const refreshExpiredAt =
+  //       Number(process.env.JWT_REFRESH_EXPIRES_IN) || 604800;
+  //     const refreshCookie = `Refresh=${refreshToken}; HttpOnly; SameSite=${
+  //       isSameSite ? 'Strict' : 'None'
+  //     }; Path=/; Max-Age=${refreshExpiredAt}; ${isSecure ? 'Secure' : ''}`;
+  //     return [authCookie, refreshCookie];
+  //   }
+  //   return [authCookie];
+  // }
   buildResponsePayload(accessToken: string, refreshToken?: string): string[] {
-    const isSecure =
-      process.env.NODE_ENV === 'production' &&
-      process.env.IS_HTTPS_ENABLED === 'true';
+    const isProduction = process.env.NODE_ENV === 'production';
+    const isSecure = isProduction && process.env.IS_HTTPS_ENABLED === 'true';
+
+    // Nếu là production => SameSite=None; còn dev => Lax
+    const sameSite = isProduction ? 'None' : 'Lax';
+
     const expiredAt = Number(process.env.JWT_EXPIRES_IN) || 900;
-    const authCookie = `Authentication=${accessToken}; HttpOnly; SameSite=${
-      isSameSite ? 'Strict' : 'None'
-    }; Path=/; Max-Age=${expiredAt}; ${isSecure ? 'Secure' : ''}`;
+    const authCookie = `Authentication=${accessToken}; HttpOnly; SameSite=${sameSite}; Path=/; Max-Age=${expiredAt}; ${
+      isSecure ? 'Secure' : ''
+    }`;
+
     if (refreshToken) {
       const refreshExpiredAt =
         Number(process.env.JWT_REFRESH_EXPIRES_IN) || 604800;
-      const refreshCookie = `Refresh=${refreshToken}; HttpOnly; SameSite=${
-        isSameSite ? 'Strict' : 'None'
-      }; Path=/; Max-Age=${refreshExpiredAt}; ${isSecure ? 'Secure' : ''}`;
+      const refreshCookie = `Refresh=${refreshToken}; HttpOnly; SameSite=${sameSite}; Path=/; Max-Age=${refreshExpiredAt}; ${
+        isSecure ? 'Secure' : ''
+      }`;
       return [authCookie, refreshCookie];
     }
+
     return [authCookie];
   }
 

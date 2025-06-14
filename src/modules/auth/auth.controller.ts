@@ -99,12 +99,7 @@ export class AuthController {
   }
 
   @Post('/refresh')
-  async refresh(
-    @Req()
-    req: Request,
-    @Res()
-    response: Response
-  ) {
+  async refresh(@Req() req: Request, @Res() response: Response) {
     try {
       const cookiePayload =
         await this.authService.createAccessTokenFromRefreshToken(
@@ -249,12 +244,7 @@ export class AuthController {
   }
 
   @Post('/logout')
-  async logOut(
-    @Req()
-    req: Request,
-    @Res()
-    response: Response
-  ) {
+  async logOut(@Req() req: Request, @Res() response: Response) {
     try {
       const cookie = req.cookies['Refresh'];
       response.setHeader('Set-Cookie', this.authService.getCookieForLogOut());
