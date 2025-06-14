@@ -49,175 +49,175 @@ async function main() {
     },
     {
       resource: 'users',
-      description: 'user-index',
+      description: 'findAll',
       path: '/users',
       method: 'GET',
       isDefault: true
     },
     {
       resource: 'users',
-      description: 'user-show',
+      description: 'findOne',
       path: '/users/:id',
       method: 'GET',
       isDefault: true
     },
     {
       resource: 'users',
-      description: 'user-store',
+      description: 'create',
       path: '/users',
       method: 'POST',
       isDefault: true
     },
     {
       resource: 'users',
-      description: 'user-update',
+      description: 'update',
       path: '/users/:id',
       method: 'PATCH',
       isDefault: true
     },
     {
       resource: 'users',
-      description: 'user-delete',
+      description: 'remove',
       path: '/users/:id',
       method: 'DELETE',
       isDefault: true
     },
     {
       resource: 'roles',
-      description: 'role-index',
+      description: 'findAll',
       path: '/roles',
       method: 'GET',
       isDefault: true
     },
     {
       resource: 'roles',
-      description: 'role-show',
+      description: 'findOne',
       path: '/roles/:id',
       method: 'GET',
       isDefault: true
     },
     {
       resource: 'roles',
-      description: 'role-store',
+      description: 'create',
       path: '/roles',
       method: 'POST',
       isDefault: true
     },
     {
       resource: 'roles',
-      description: 'role-update',
+      description: 'update',
       path: '/roles/:id',
       method: 'PATCH',
       isDefault: true
     },
     {
       resource: 'roles',
-      description: 'role-delete',
+      description: 'remove',
       path: '/roles/:id',
       method: 'DELETE',
       isDefault: true
     },
     {
       resource: 'permissions',
-      description: 'permission-index',
+      description: 'findAll',
       path: '/permissions',
       method: 'GET',
       isDefault: true
     },
     {
       resource: 'permissions',
-      description: 'permission-show',
+      description: 'findOne',
       path: '/permissions/:id',
       method: 'GET',
       isDefault: true
     },
     {
       resource: 'permissions',
-      description: 'permission-store',
+      description: 'create',
       path: '/permissions',
       method: 'POST',
       isDefault: true
     },
     {
       resource: 'permissions',
-      description: 'permission-update',
+      description: 'update',
       path: '/permissions/:id',
       method: 'PATCH',
       isDefault: true
     },
     {
       resource: 'permissions',
-      description: 'permission-delete',
+      description: 'remove',
       path: '/permissions/:id',
       method: 'DELETE',
       isDefault: true
     },
     {
       resource: 'house',
-      description: 'house-index',
+      description: 'findAll',
       path: '/house',
       method: 'GET',
       isDefault: true
     },
     {
       resource: 'house',
-      description: 'house-show',
+      description: 'findOne',
       path: '/house/:id',
       method: 'GET',
       isDefault: true
     },
     {
       resource: 'house',
-      description: 'house-store',
+      description: 'create',
       path: '/house',
       method: 'POST',
       isDefault: true
     },
     {
       resource: 'house',
-      description: 'house-update',
+      description: 'update',
       path: '/house/:id',
       method: 'PATCH',
       isDefault: true
     },
     {
       resource: 'house',
-      description: 'house-delete',
+      description: 'remove',
       path: '/house/:id',
       method: 'DELETE',
       isDefault: true
     },
     {
       resource: 'room',
-      description: 'room-index',
+      description: 'findAll',
       path: '/room',
       method: 'GET',
       isDefault: true
     },
     {
       resource: 'room',
-      description: 'room-show',
+      description: 'findOne',
       path: '/room/:id',
       method: 'GET',
       isDefault: true
     },
     {
       resource: 'room',
-      description: 'room-store',
+      description: 'create',
       path: '/room',
       method: 'POST',
       isDefault: true
     },
     {
       resource: 'room',
-      description: 'room-update',
+      description: 'update',
       path: '/room/:id',
       method: 'PATCH',
       isDefault: true
     },
     {
       resource: 'room',
-      description: 'room-delete',
+      description: 'remove',
       path: '/room/:id',
       method: 'DELETE',
       isDefault: true
@@ -226,73 +226,36 @@ async function main() {
 
     {
       resource: 'asset',
-      description: 'asset-index',
+      description: 'findAll',
       path: '/asset',
       method: 'GET',
       isDefault: true
     },
     {
       resource: 'asset',
-      description: 'asset-show',
+      description: 'findOne',
       path: '/asset/:id',
       method: 'GET',
       isDefault: true
     },
     {
       resource: 'asset',
-      description: 'asset-store',
+      description: 'create',
       path: '/asset',
       method: 'POST',
       isDefault: true
     },
     {
       resource: 'asset',
-      description: 'asset-update',
+      description: 'update',
       path: '/asset/:id',
       method: 'PATCH',
       isDefault: true
     },
     {
       resource: 'asset',
-      description: 'asset-delete',
+      description: 'remove',
       path: '/asset/:id',
-      method: 'DELETE',
-      isDefault: true
-    },
-    //
-
-    {
-      resource: 'asset-category',
-      description: 'asset-category-index',
-      path: '/asset-category',
-      method: 'GET',
-      isDefault: true
-    },
-    {
-      resource: 'asset-category',
-      description: 'asset-category-show',
-      path: '/asset-category/:id',
-      method: 'GET',
-      isDefault: true
-    },
-    {
-      resource: 'asset-category',
-      description: 'asset-category-store',
-      path: '/asset-category',
-      method: 'POST',
-      isDefault: true
-    },
-    {
-      resource: 'asset-category',
-      description: 'asset-category-update',
-      path: '/asset-category/:id',
-      method: 'PATCH',
-      isDefault: true
-    },
-    {
-      resource: 'asset-category',
-      description: 'asset-category-delete',
-      path: '/asset-category/:id',
       method: 'DELETE',
       isDefault: true
     }
@@ -347,7 +310,12 @@ async function main() {
   for (const permissionData of permissions) {
     console.log(`Creating permission ${permissionData.description}...`);
     const permission = await prisma.permission.upsert({
-      where: { description: permissionData.description },
+      where: {
+        resource_description: {
+          resource: permissionData.resource,
+          description: permissionData.description
+        }
+      },
       update: {},
       create: permissionData
     });

@@ -58,7 +58,7 @@ model Role {
 model Permission {
   id          Int      @id @default(autoincrement())
   resource    String
-  description String   @unique
+  description String   
   path        String
   method      String   @default("GET")
   isDefault   Boolean? @default(false)
@@ -70,6 +70,7 @@ model Permission {
 
   @@map("permission")
   @@index([description])
+  @@unique([resource, description])
 }
 
 model RolePermission {

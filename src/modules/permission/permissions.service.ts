@@ -39,7 +39,12 @@ export class PermissionsService {
    */
   async findByName(name: string): Promise<PermissionDto | null> {
     const permission = await this.prisma.permission.findUnique({
-      where: { description: name }
+      where: {
+        resource_description: {
+          resource: name,
+          description: name
+        }
+      }
     });
     if (!permission) return null;
 
@@ -69,7 +74,12 @@ export class PermissionsService {
   ): Promise<PermissionDto> {
     // Check if permission with same name exists
     const existingPermission = await this.prisma.permission.findUnique({
-      where: { description: createPermissionDto.description }
+      where: {
+        resource_description: {
+          resource: createPermissionDto.resource,
+          description: createPermissionDto.description
+        }
+      }
     });
 
     if (existingPermission) {
