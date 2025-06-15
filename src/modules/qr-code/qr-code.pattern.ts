@@ -1,7 +1,7 @@
 export const QR_CODE_PATTERN = {
-  CREATE: 'qrCode.create',
-  FIND_ALL: 'qrCode.findAll',
-  FIND_ONE: 'qrCode.findOne',
-  UPDATE: 'qrCode.update',
-  REMOVE: 'qrCode.remove'
+  CREATE: 'qRCode.create',
+  FIND_ALL: 'qRCode.findAll',
+  FIND_ONE: 'qRCode.findOne',
+  UPDATE: 'qRCode.update',
+  REMOVE: 'qRCode.remove'
 };
