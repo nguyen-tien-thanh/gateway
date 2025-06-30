@@ -29,15 +29,15 @@ const parseNumber = (value: string | number, defaultValue = 0): number => {
 
 export const Filter = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): IFilter => {
-    const { take, skip, where, include, select, orderBy } = ctx
-      .switchToHttp()
-      .getRequest().query;
+    const request = ctx.switchToHttp().getRequest();
+    const { take, skip, where, include, select, orderBy } = request.query;
 
     const filter: IFilter = {};
 
-    if (where) filter.where = parseJSON(where);
-    filter.take = parseNumber(take, 10);
+    const parsedTake = parseNumber(take, 10);
+    if (parsedTake !== -1) filter.take = parsedTake;
     filter.skip = parseNumber(skip, 0);
+    if (where) filter.where = parseJSON(where);
     if (include) filter.include = parseJSON(include);
     if (orderBy) filter.orderBy = parseJSON(orderBy);
     if (select && !filter.include) filter.select = parseJSON(select);

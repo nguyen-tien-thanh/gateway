@@ -20,7 +20,10 @@ export class PermissionsService {
     const { take = 10, skip = 0, where } = filter;
 
     const [permissions, total] = await Promise.all([
-      this.prisma.permission.findMany({ ...filter }),
+      this.prisma.permission.findMany({
+        orderBy: { updatedAt: 'desc', ...filter.orderBy },
+        ...filter
+      }),
       this.prisma.permission.count({ where })
     ]);
 
@@ -117,20 +120,20 @@ export class PermissionsService {
     }
 
     // Check if name is unique (excluding current permission)
-    if (updatePermissionDto.description) {
-      const existingPermission = await this.prisma.permission.findFirst({
-        where: {
-          description: updatePermissionDto.description,
-          NOT: { id }
-        }
-      });
+    // if (updatePermissionDto.description) {
+    //   const existingPermission = await this.prisma.permission.findFirst({
+    //     where: {
+    //       description: updatePermissionDto.description,
+    //       NOT: { id }
+    //     }
+    //   });
 
-      if (existingPermission) {
-        throw new UnprocessableEntityException(
-          `Permission with name '${updatePermissionDto.description}' already exists`
-        );
-      }
-    }
+    //   if (existingPermission) {
+    //     throw new UnprocessableEntityException(
+    //       `Permission with name '${updatePermissionDto.description}' already exists`
+    //     );
+    //   }
+    // }
 
     const updateData: Prisma.PermissionUpdateInput = {
       ...(updatePermissionDto.resource && {
