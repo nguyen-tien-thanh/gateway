@@ -22,8 +22,7 @@
     "prisma:deploy": "prisma migrate deploy",
     "prisma:reset": "prisma migrate reset",
     "prisma:seed": "ts-node prisma/seed.ts",
-    "prisma:studio": "prisma studio",
-    "docker:push": "docker buildx build --platform linux/amd64 -t nguyentienthanh2909/371-gateway:latest --push ."
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch-logs": "^3.54.1",

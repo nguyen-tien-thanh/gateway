@@ -11,7 +11,7 @@ import { EmailTemplateModule } from 'src/modules/email-template/email-template.m
   imports: [
     EmailTemplateModule,
     BullModule.registerQueueAsync({
-      name: process.env.MAIL_QUEUE_NAME || 'agb-mail',
+      name: process.env.MAIL_QUEUE_NAME || 'cis-mail',
       useFactory: () => ({
         redis: {
           host: process.env.REDIS_HOST || 'localhost',
@@ -36,8 +36,8 @@ import { EmailTemplateModule } from 'src/modules/email-template/email-template.m
           }
         },
         defaults: {
-          from: `"${process.env.MAIL_FROM || 'agb'}" <${
-            process.env.MAIL_FROM_MAIL || 'noreply@agb.com'
+          from: `"${process.env.MAIL_FROM || 'cis'}" <${
+            process.env.MAIL_FROM_MAIL || 'noreply@cis.com'
           }>`
         },
         preview: process.env.MAIL_PREVIEW === 'true',

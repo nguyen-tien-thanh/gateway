@@ -11,7 +11,7 @@ import { Job } from 'bull';
 
 import { MailJobInterface } from 'src/modules/mail/interface/mail-job.interface';
 
-@Processor(process.env.MAIL_QUEUE_NAME || 'agb-mail')
+@Processor(process.env.MAIL_QUEUE_NAME || 'cis-mail')
 export class MailProcessor {
   private readonly logger = new Logger(this.constructor.name);
 
@@ -54,7 +54,7 @@ export class MailProcessor {
     try {
       const options: Record<string, any> = {
         to: job.data.payload.to,
-        from: process.env.MAIL_FROM_MAIL || 'noreply@agb.com',
+        from: process.env.MAIL_FROM_MAIL || 'noreply@cis.com',
         subject: job.data.payload.subject,
         template: 'email-layout',
         context: job.data.payload.context,

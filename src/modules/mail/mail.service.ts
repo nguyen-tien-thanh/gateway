@@ -8,7 +8,7 @@ import { EmailTemplateService } from 'src/modules/email-template/email-template.
 @Injectable()
 export class MailService {
   constructor(
-    @InjectQueue(process.env.MAIL_QUEUE_NAME || 'agb-mail')
+    @InjectQueue(process.env.MAIL_QUEUE_NAME || 'cis-mail')
     private mailQueue: Queue,
     private readonly emailTemplateService: EmailTemplateService
   ) {}

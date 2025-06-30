@@ -103,7 +103,7 @@ http://localhost:7777/api-docs
 ## Project Structure
 
 ```
-agb
+cis
 ├── config/               # Configuration files
 ├── prisma/               # Database schema and migrations
 ├── public/               # Static files
