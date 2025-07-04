@@ -14,28 +14,8 @@ async function main() {
     },
     {
       id: 2,
-      name: 'OWNER',
-      description: 'Chủ nhà / Owner'
-    },
-    {
-      id: 3,
-      name: 'STAFF',
-      description: 'Nhân viên / Staff'
-    },
-    {
-      id: 4,
-      name: 'PARTNER',
-      description: 'Đối tác / Partner'
-    },
-    {
-      id: 5,
-      name: 'TENANT',
-      description: 'Người thuê nhà / Tenant'
-    },
-    {
-      id: 6,
       name: 'USER',
-      description: 'Người dùng / User'
+      description: 'User'
     }
   ];
 
@@ -153,109 +133,37 @@ async function main() {
       isDefault: true
     },
     {
-      resource: 'house',
+      resource: 'calls',
       description: 'findAll',
-      path: '/house',
+      path: '/calls',
       method: 'GET',
       isDefault: true
     },
     {
-      resource: 'house',
+      resource: 'calls',
       description: 'findOne',
-      path: '/house/:id',
+      path: '/calls/:id',
       method: 'GET',
       isDefault: true
     },
     {
-      resource: 'house',
+      resource: 'calls',
       description: 'create',
-      path: '/house',
+      path: '/calls',
       method: 'POST',
       isDefault: true
     },
     {
-      resource: 'house',
+      resource: 'calls',
       description: 'update',
-      path: '/house/:id',
+      path: '/calls/:id',
       method: 'PATCH',
       isDefault: true
     },
     {
-      resource: 'house',
+      resource: 'calls',
       description: 'remove',
-      path: '/house/:id',
-      method: 'DELETE',
-      isDefault: true
-    },
-    {
-      resource: 'room',
-      description: 'findAll',
-      path: '/room',
-      method: 'GET',
-      isDefault: true
-    },
-    {
-      resource: 'room',
-      description: 'findOne',
-      path: '/room/:id',
-      method: 'GET',
-      isDefault: true
-    },
-    {
-      resource: 'room',
-      description: 'create',
-      path: '/room',
-      method: 'POST',
-      isDefault: true
-    },
-    {
-      resource: 'room',
-      description: 'update',
-      path: '/room/:id',
-      method: 'PATCH',
-      isDefault: true
-    },
-    {
-      resource: 'room',
-      description: 'remove',
-      path: '/room/:id',
-      method: 'DELETE',
-      isDefault: true
-    },
-    //
-
-    {
-      resource: 'asset',
-      description: 'findAll',
-      path: '/asset',
-      method: 'GET',
-      isDefault: true
-    },
-    {
-      resource: 'asset',
-      description: 'findOne',
-      path: '/asset/:id',
-      method: 'GET',
-      isDefault: true
-    },
-    {
-      resource: 'asset',
-      description: 'create',
-      path: '/asset',
-      method: 'POST',
-      isDefault: true
-    },
-    {
-      resource: 'asset',
-      description: 'update',
-      path: '/asset/:id',
-      method: 'PATCH',
-      isDefault: true
-    },
-    {
-      resource: 'asset',
-      description: 'remove',
-      path: '/asset/:id',
+      path: '/calls/:id',
       method: 'DELETE',
       isDefault: true
     }
@@ -301,11 +209,6 @@ async function main() {
   }
 
   const adminRole = await prisma.role.findFirst({ where: { name: 'ADMIN' } });
-  const ownerRole = await prisma.role.findFirst({ where: { name: 'OWNER' } });
-  const staffRole = await prisma.role.findFirst({ where: { name: 'STAFF' } });
-  const partRole = await prisma.role.findFirst({ where: { name: 'PARTNER' } });
-  const tenantRole = await prisma.role.findFirst({ where: { name: 'TENANT' } });
-  const userRole = await prisma.role.findFirst({ where: { name: 'USER' } });
 
   for (const permissionData of permissions) {
     console.log(`Creating permission ${permissionData.description}...`);
@@ -331,87 +234,6 @@ async function main() {
       update: {},
       create: { roleId: adminRole.id, permissionId: permission.id }
     });
-
-    if (
-      !permission.resource.includes('*') &&
-      !permission.resource.includes('house')
-    ) {
-      console.log(`Assigning ${permission.resource} to owner role...`);
-      await prisma.rolePermission.upsert({
-        where: {
-          roleId_permissionId: {
-            roleId: ownerRole.id,
-            permissionId: permission.id
-          }
-        },
-        update: {},
-        create: { roleId: ownerRole.id, permissionId: permission.id }
-      });
-    }
-
-    if (
-      !permission.resource.includes('*') &&
-      !permission.resource.includes('house')
-    ) {
-      console.log(`Assigning ${permission.resource} to staff role...`);
-      await prisma.rolePermission.upsert({
-        where: {
-          roleId_permissionId: {
-            roleId: staffRole.id,
-            permissionId: permission.id
-          }
-        },
-        update: {},
-        create: { roleId: staffRole.id, permissionId: permission.id }
-      });
-
-      console.log(`Assigning ${permission.resource} to partner role...`);
-      await prisma.rolePermission.upsert({
-        where: {
-          roleId_permissionId: {
-            roleId: partRole.id,
-            permissionId: permission.id
-          }
-        },
-        update: {},
-        create: { roleId: partRole.id, permissionId: permission.id }
-      });
-    }
-
-    if (
-      permission.resource.includes('tenant') ||
-      permission.resource.includes('contract') ||
-      permission.resource.includes('payment')
-    ) {
-      console.log(`Assigning ${permission.resource} to tenant role...`);
-      await prisma.rolePermission.upsert({
-        where: {
-          roleId_permissionId: {
-            roleId: tenantRole.id,
-            permissionId: permission.id
-          }
-        },
-        update: {},
-        create: { roleId: tenantRole.id, permissionId: permission.id }
-      });
-    }
-
-    if (
-      permission.resource.includes('read') ||
-      permission.resource.includes('view')
-    ) {
-      console.log(`Assigning ${permission.resource} to user role...`);
-      await prisma.rolePermission.upsert({
-        where: {
-          roleId_permissionId: {
-            roleId: userRole.id,
-            permissionId: permission.id
-          }
-        },
-        update: {},
-        create: { roleId: userRole.id, permissionId: permission.id }
-      });
-    }
   }
 
   console.log('Creating default email templates...');

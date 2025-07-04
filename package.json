@@ -53,6 +53,7 @@
     "helmet": "^5.1.1",
     "ioredis": "^4.28.5",
     "js-yaml": "^4.1.0",
+    "ldap-authentication": "^3.3.4",
     "nestjs-i18n": "^8.2.2",
     "nestjs-throttler-storage-redis": "^0.1.18",
     "nodemailer": "^6.7.2",

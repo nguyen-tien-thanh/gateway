@@ -5,6 +5,7 @@ import * as Redis from 'ioredis';
 
 import { AuthController } from 'src/modules/auth/auth.controller';
 import { AuthService } from 'src/modules/auth/auth.service';
+import { LdapService } from 'src/modules/auth/ldap.service';
 import { PrismaModule } from 'src/shared/prisma/prisma.module';
 // import { MailModule } from 'src/modules/mail/mail.module';
 import { RateLimiterRedis } from 'rate-limiter-flexible';
@@ -26,7 +27,8 @@ const LoginThrottleFactory = {
       storeClient: redisClient,
       keyPrefix: process.env.THROTTLE_LOGIN_PREFIX || 'login_fail_throttle',
       points: Number(process.env.THROTTLE_LOGIN_LIMIT) || 5,
-      duration: Number(process.env.THROTTLE_LOGIN_DURATION) || 60 * 60 * 24 * 30, // Store number for 30 days since first fail
+      duration:
+        Number(process.env.THROTTLE_LOGIN_DURATION) || 60 * 60 * 24 * 30,
       blockDuration: Number(process.env.THROTTLE_LOGIN_BLOCK_DURATION) || 3000
     });
   }
@@ -52,12 +54,14 @@ const LoginThrottleFactory = {
   controllers: [AuthController],
   providers: [
     AuthService,
+    LdapService,
     JwtTwoFactorStrategy,
     JwtStrategy,
     LoginThrottleFactory
   ],
   exports: [
     AuthService,
+    LdapService,
     JwtTwoFactorStrategy,
     JwtStrategy,
     PassportModule,

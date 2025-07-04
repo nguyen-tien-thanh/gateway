@@ -6,7 +6,7 @@ export interface IFilter {
   skip?: number;
   where?: Record<string, any>;
   include?: Record<string, boolean | any>;
-  orderBy?: Record<string, 'asc' | 'desc' | any>;
+  orderBy?: Record<string, 'asc' | 'desc'>[];
   select?: Record<string, boolean | any>;
 }
 

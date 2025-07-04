@@ -13,7 +13,7 @@ interface rolePayload {
 export enum MethodList {
   GET = 'get',
   POST = 'post',
-  PUT = 'put',
+  PATCH = 'patch',
   DELETE = 'delete',
   ANY = 'any',
   OPTIONS = 'options'
@@ -85,23 +85,23 @@ export const PermissionConfiguration: PermissionConfigInterface = {
     },
     {
       path: '/auth/forgot-password',
-      method: MethodList.PUT
+      method: MethodList.PATCH
     },
     {
       path: '/auth/reset-password',
-      method: MethodList.PUT
+      method: MethodList.PATCH
     },
     {
       path: '/auth/change-password',
-      method: MethodList.PUT
+      method: MethodList.PATCH
     },
     {
       path: '/auth/profile',
-      method: MethodList.PUT
+      method: MethodList.PATCH
     },
     {
       path: '/revoke/:id',
-      method: MethodList.PUT
+      method: MethodList.PATCH
     },
     {
       path: '/auth/token-info',
@@ -153,7 +153,7 @@ export const PermissionConfiguration: PermissionConfigInterface = {
           route: [
             {
               path: '/users/:id',
-              method: MethodList.PUT
+              method: MethodList.PATCH
             }
           ]
         },
@@ -205,7 +205,7 @@ export const PermissionConfiguration: PermissionConfigInterface = {
           route: [
             {
               path: '/roles/:id',
-              method: MethodList.PUT
+              method: MethodList.PATCH
             }
           ]
         },
@@ -266,7 +266,7 @@ export const PermissionConfiguration: PermissionConfigInterface = {
           route: [
             {
               path: '/permissions/:id',
-              method: MethodList.PUT
+              method: MethodList.PATCH
             }
           ]
         },
@@ -318,7 +318,7 @@ export const PermissionConfiguration: PermissionConfigInterface = {
           route: [
             {
               path: '/email-templates/:id',
-              method: MethodList.PUT
+              method: MethodList.PATCH
             }
           ]
         },

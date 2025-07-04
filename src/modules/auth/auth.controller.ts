@@ -32,6 +32,7 @@ import { ResetPasswordDto } from 'src/modules/auth/dto/reset-password.dto';
 import { UpdateUserDto } from 'src/modules/auth/dto/update-user.dto';
 import { UpdateUserProfileDto } from 'src/modules/auth/dto/update-user-profile.dto';
 import { UserLoginDto } from 'src/modules/auth/dto/user-login.dto';
+import { LdapLoginDto } from 'src/modules/auth/dto/ldap-login.dto';
 import { UserSerializer } from 'src/modules/auth/serializer/user.serializer';
 import { multerOptionsHelper } from 'src/common/helper/multer-options.helper';
 import { PermissionGuard } from 'src/common/guard/permission.guard';
@@ -63,7 +64,7 @@ export class AuthController {
       address: '',
       contact: '',
       avatar: '',
-      status: 'ACTIVE' as UserStatus,
+      status: 'INACTIVE' as UserStatus,
       token: '',
       salt: '', // Will be generated in service
       role: { connect: { id: 6 } } // Default user role
@@ -73,12 +74,9 @@ export class AuthController {
 
   @Post('/auth/login')
   async login(
-    @Req()
-    req: Request,
-    @Res()
-    response: Response,
-    @Body()
-    userLoginDto: UserLoginDto
+    @Req() req: Request,
+    @Res() response: Response,
+    @Body() userLoginDto: UserLoginDto
   ) {
     const ua = UAParser(req.headers['user-agent']);
     const refreshTokenPayload: Partial<RefreshToken> = {
@@ -115,37 +113,25 @@ export class AuthController {
 
   @Get('/auth/activate-account')
   @HttpCode(HttpStatus.NO_CONTENT)
-  activateAccount(
-    @Query('token')
-    token: string
-  ): Promise<void> {
+  activateAccount(@Query('token') token: string): Promise<void> {
     return this.authService.activateAccount(token);
   }
 
   @Put('/auth/forgot-password')
   @HttpCode(HttpStatus.NO_CONTENT)
-  forgotPassword(
-    @Body()
-    forgetPasswordDto: ForgetPasswordDto
-  ): Promise<void> {
+  forgotPassword(@Body() forgetPasswordDto: ForgetPasswordDto): Promise<void> {
     return this.authService.forgotPassword(forgetPasswordDto);
   }
 
   @Put('/auth/reset-password')
   @HttpCode(HttpStatus.NO_CONTENT)
-  resetPassword(
-    @Body()
-    resetPasswordDto: ResetPasswordDto
-  ): Promise<void> {
+  resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<void> {
     return this.authService.resetPassword(resetPasswordDto);
   }
 
   @UseGuards(JwtTwoFactorGuard)
   @Get('/auth/profile')
-  profile(
-    @GetUser()
-    user: UserWithRole
-  ): Promise<UserSerializer> {
+  profile(@GetUser() user: UserWithRole): Promise<UserSerializer> {
     return this.authService.get(user);
   }
 
@@ -158,26 +144,19 @@ export class AuthController {
     )
   )
   updateProfile(
-    @GetUser()
-    user: UserWithRole,
-    @UploadedFile()
-    file: Express.Multer.File,
-    @Body()
-    updateUserDto: UpdateUserProfileDto
+    @GetUser() user: UserWithRole,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() updateUserDto: UpdateUserProfileDto
   ): Promise<UserSerializer> {
-    if (file) {
-      updateUserDto.avatar = file.filename;
-    }
+    if (file) updateUserDto.avatar = file.filename;
     return this.authService.update(user.id, updateUserDto);
   }
 
   @UseGuards(JwtTwoFactorGuard)
   @Put('/auth/change-password')
   changePassword(
-    @GetUser()
-    user: UserWithRole,
-    @Body()
-    changePasswordDto: ChangePasswordDto
+    @GetUser() user: UserWithRole,
+    @Body() changePasswordDto: ChangePasswordDto
   ): Promise<void> {
     return this.authService.changePassword(user, changePasswordDto);
   }
@@ -215,10 +194,8 @@ export class AuthController {
   @UseGuards(JwtTwoFactorGuard, PermissionGuard)
   @Patch('/users/:id')
   update(
-    @Param('id')
-    id: string,
-    @Body()
-    updateUserDto: UpdateUserDto
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto
   ): Promise<UserSerializer> {
     // Convert DTO to Prisma UserUpdateInput
     const updateInput: any = {};
@@ -228,6 +205,7 @@ export class AuthController {
     if (updateUserDto.address) updateInput.address = updateUserDto.address;
     if (updateUserDto.contact) updateInput.contact = updateUserDto.contact;
     if (updateUserDto.status) updateInput.status = updateUserDto.status;
+    if (updateUserDto.ext) updateInput.ext = updateUserDto.ext;
     if (updateUserDto.roleId)
       updateInput.role = { connect: { id: updateUserDto.roleId } };
 
@@ -236,10 +214,7 @@ export class AuthController {
 
   @UseGuards(JwtTwoFactorGuard, PermissionGuard)
   @Get('/users/:id')
-  findOne(
-    @Param('id')
-    id: string
-  ): Promise<UserSerializer> {
+  findOne(@Param('id') id: string): Promise<UserSerializer> {
     return this.authService.findById(+id);
   }
 
@@ -283,5 +258,29 @@ export class AuthController {
     user: UserWithRole
   ): Promise<RefreshToken> {
     return this.authService.revokeTokenById(+id, +user.id);
+  }
+
+  @Post('/auth/ldap-login')
+  async ldapLogin(
+    @Req() req: Request,
+    @Res() response: Response,
+    @Body() ldapLoginDto: LdapLoginDto
+  ) {
+    const ua = UAParser(req.headers['user-agent']);
+    const refreshTokenPayload: Partial<RefreshToken> = {
+      ip: req.ip,
+      userAgent: JSON.stringify(ua),
+      browser: ua.browser.name,
+      os: ua.os.name,
+      userId: 0, // Will be set by service
+      isRevoked: false,
+      expires: new Date()
+    };
+    const cookiePayload = await this.authService.loginWithLdap(
+      ldapLoginDto,
+      refreshTokenPayload
+    );
+    response.setHeader('Set-Cookie', cookiePayload);
+    return response.status(HttpStatus.NO_CONTENT).json({});
   }
 }

@@ -19,6 +19,7 @@ export class UserModel implements PrismaUser {
   id: number;
   username: string;
   email: string;
+  ext: number | null;
 
   @Exclude({ toPlainOnly: true })
   password: string;

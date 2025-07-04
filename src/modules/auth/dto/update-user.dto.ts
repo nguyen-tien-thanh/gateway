@@ -3,7 +3,8 @@ import {
   IsIn,
   IsString,
   ValidateIf,
-  IsOptional
+  IsOptional,
+  IsNumber
 } from 'class-validator';
 import { ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 
@@ -54,4 +55,9 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiPropertyOptional()
   @ValidateIf((object, value) => value)
   roleId: number;
+
+  @ApiPropertyOptional()
+  @ValidateIf((object, value) => value)
+  @IsNumber()
+  ext?: number;
 }

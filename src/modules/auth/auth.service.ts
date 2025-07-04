@@ -29,6 +29,7 @@ import { ChangePasswordDto } from 'src/modules/auth/dto/change-password.dto';
 import { ForgetPasswordDto } from 'src/modules/auth/dto/forget-password.dto';
 import { ResetPasswordDto } from 'src/modules/auth/dto/reset-password.dto';
 import { UserLoginDto } from 'src/modules/auth/dto/user-login.dto';
+import { LdapLoginDto } from 'src/modules/auth/dto/ldap-login.dto';
 import { UserSearchFilterDto } from 'src/modules/auth/dto/user-search-filter.dto';
 import { UserWithRole } from 'src/modules/auth/models/user.model';
 import { UserSerializer } from 'src/modules/auth/serializer/user.serializer';
@@ -37,6 +38,7 @@ import { ValidationPayloadInterface } from 'src/common/interfaces/validation-err
 import { RefreshPaginateFilterDto } from 'src/modules/refresh-token/dto/refresh-paginate-filter.dto';
 import { RefreshTokenSerializer } from 'src/modules/refresh-token/serializer/refresh-token.serializer';
 import { IFilter } from 'src/common/decorators/filter.decorator';
+import { LdapService } from 'src/modules/auth/ldap.service';
 
 const isSameSite = process.env.IS_SAME_SITE === 'true';
 const BASE_OPTIONS: SignOptions = {
@@ -52,7 +54,8 @@ export class AuthService {
     @Inject(forwardRef(() => RefreshTokenService))
     private readonly refreshTokenService: RefreshTokenService,
     @Inject('LOGIN_THROTTLE')
-    private readonly rateLimiter: RateLimiterStoreAbstract
+    private readonly rateLimiter: RateLimiterStoreAbstract,
+    private readonly ldapService: LdapService
   ) {}
 
   /**
@@ -275,6 +278,117 @@ export class AuthService {
   }
 
   /**
+   * Login user via LDAP
+   * @param ldapLoginDto
+   * @param refreshTokenPayload
+   */
+  async loginWithLdap(
+    ldapLoginDto: LdapLoginDto,
+    refreshTokenPayload: Partial<RefreshToken>
+  ): Promise<string[]> {
+    const usernameIPkey = `${ldapLoginDto.username}_${refreshTokenPayload.ip}`;
+    const resUsernameAndIP = await this.rateLimiter.get(usernameIPkey);
+    let retrySecs = 0;
+
+    // Check if user is already blocked
+    if (
+      resUsernameAndIP !== null &&
+      resUsernameAndIP.consumedPoints >
+        (Number(process.env.THROTTLE_LOGIN_LIMIT) || 5)
+    ) {
+      retrySecs = Math.round(resUsernameAndIP.msBeforeNext / 1000) || 1;
+    }
+
+    if (retrySecs > 0) {
+      throw new CustomHttpException(
+        `tooManyRequest-{"second":"${String(retrySecs)}"}`,
+        HttpStatus.TOO_MANY_REQUESTS,
+        StatusCodesList.TooManyTries
+      );
+    }
+
+    // Authenticate with LDAP
+    const ldapConfig = this.ldapService.getLdapConfig();
+    const ldapUser = await this.ldapService.authenticate(
+      ldapLoginDto.username,
+      ldapLoginDto.password,
+      ldapConfig
+    );
+
+    if (!ldapUser) {
+      const [result, throttleError] = await this.limitConsumerPromiseHandler(
+        usernameIPkey
+      );
+      if (!result) {
+        throw new CustomHttpException(
+          `tooManyRequest-{"second":${String(
+            Math.round(throttleError.msBeforeNext / 1000) || 1
+          )}}`,
+          HttpStatus.TOO_MANY_REQUESTS,
+          StatusCodesList.TooManyTries
+        );
+      }
+      throw new UnauthorizedException(
+        ExceptionTitleList.InvalidCredentials,
+        StatusCodesList.InvalidCredentials
+      );
+    }
+
+    // Find or create user in local database
+    let user = await this.prisma.user.findUnique({
+      where: { username: ldapLoginDto.username },
+      include: {
+        role: { include: { permissions: { include: { permission: true } } } }
+      }
+    });
+
+    // If user doesn't exist, create one
+    if (!user) {
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(ldapLoginDto.password, salt);
+
+      user = await this.prisma.user.create({
+        data: {
+          username: ldapLoginDto.username,
+          email: ldapUser.mail || `${ldapLoginDto.username}@ldap.local`,
+          password: hashedPassword,
+          salt: salt,
+          name: ldapUser.cn || ldapUser.givenName || ldapLoginDto.username,
+          address: '',
+          contact: '',
+          avatar: '',
+          status: UserStatus.INACTIVE,
+          role: { connect: { id: 2 } }, // Default to normal user role
+          token: await this.generateUniqueToken(6)
+        },
+        include: {
+          role: { include: { permissions: { include: { permission: true } } } }
+        }
+      });
+    } else {
+      // Check if user is active
+      if (user.status !== UserStatus.ACTIVE) {
+        throw new UnauthorizedException(
+          ExceptionTitleList.UserInactive,
+          StatusCodesList.UserInactive
+        );
+      }
+    }
+
+    const userSerializer = this.transformUser(user);
+    const accessToken = await this.generateAccessToken(userSerializer);
+    let refreshToken = null;
+    if (ldapLoginDto.remember) {
+      refreshToken = await this.refreshTokenService.generateRefreshToken(
+        userSerializer,
+        refreshTokenPayload
+      );
+    }
+    await this.rateLimiter.delete(usernameIPkey);
+    return this.buildResponsePayload(accessToken, refreshToken);
+  }
+
+  /**
    * Transform user to UserSerializer
    * @param user
    */
@@ -293,6 +407,7 @@ export class AuthService {
       tokenValidityDate: user.tokenValidityDate,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
+      ext: user.ext,
       role:
         'role' in user && user.role
           ? {
