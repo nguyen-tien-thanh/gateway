@@ -131,6 +131,8 @@ enum UserStatus {
 
 model Call {
   id            Int      @id @unique
+  hotline       String?
+  ext           Int?
   callStartTime DateTime
   callDuration  Int?
   url           String?
@@ -144,6 +146,7 @@ model Call {
   statusId        Int? 
   callTypeId      Int? 
   queueId         Int? @unique
+  unitId          Int?
 
   transcription Transcription?
   summary       Summary? 
@@ -151,8 +154,18 @@ model Call {
   status        Status? @relation(fields: [statusId], references: [id])
   user          User? @relation(fields: [createdBy], references: [id])
   callType      CallType? @relation(fields: [callTypeId], references: [id], onDelete: SetNull)
-
+  unit          Unit? @relation(fields: [unitId], references: [id])
+  
   @@map("call_call")
+}
+
+model Unit {
+  id     Int    @id @default(autoincrement())
+  title  String
+
+  calls  Call[] 
+
+  @@map("call_unit")
 }
 
 model Transcription {

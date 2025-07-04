@@ -16,6 +16,11 @@ async function main() {
       id: 2,
       name: 'USER',
       description: 'User'
+    },
+    {
+      id: 3,
+      name: 'CS',
+      description: 'Chăm sóc khách hàng'
     }
   ];
 
