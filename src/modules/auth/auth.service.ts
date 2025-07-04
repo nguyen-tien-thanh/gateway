@@ -342,11 +342,9 @@ export class AuthService {
       }
     });
 
-    // If user doesn't exist, create one
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(ldapLoginDto.password, salt);
     if (!user) {
-      const salt = await bcrypt.genSalt();
-      const hashedPassword = await bcrypt.hash(ldapLoginDto.password, salt);
-
       user = await this.prisma.user.create({
         data: {
           username: ldapLoginDto.username,
@@ -366,13 +364,27 @@ export class AuthService {
         }
       });
     } else {
-      // Check if user is active
       if (user.status !== UserStatus.ACTIVE) {
         throw new UnauthorizedException(
           ExceptionTitleList.UserInactive,
           StatusCodesList.UserInactive
         );
       }
+      user = await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          name: ldapUser.cn || ldapUser.givenName || ldapLoginDto.username,
+          email: ldapUser.mail || `${ldapLoginDto.username}@ldap.local`,
+          address: '',
+          contact: '',
+          avatar: '',
+          status: UserStatus.ACTIVE,
+          token: await this.generateUniqueToken(6)
+        },
+        include: {
+          role: { include: { permissions: { include: { permission: true } } } }
+        }
+      });
     }
 
     const userSerializer = this.transformUser(user);
