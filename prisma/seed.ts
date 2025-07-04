@@ -180,7 +180,7 @@ async function main() {
 
     // Create default user for each role
     const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash('Sota@123', salt);
+    const hashedPassword = await bcrypt.hash('dx@123', salt);
     const dump = role.name.toLowerCase();
     const randomVietnamPhone = () =>
       '0' + Math.floor(100000000 + Math.random() * 900000000);
@@ -190,16 +190,16 @@ async function main() {
       ];
 
     await prisma.user.upsert({
-      where: { email: `${dump}@sota.com` },
+      where: { email: `${dump}@dx.com` },
       update: {},
       create: {
-        email: `${dump}@sota.com`,
+        email: `${dump}@dx.com`,
         password: hashedPassword,
         salt,
         name: role.name,
         address: randomAddress(),
         contact: randomVietnamPhone(),
-        avatar: `https://i.pravatar.cc/150?u=${dump}@sota.com`,
+        avatar: `https://i.pravatar.cc/150?u=${dump}@dx.com`,
         status: UserStatus.ACTIVE,
         roleId: role.id,
         token: '',
@@ -241,16 +241,16 @@ async function main() {
     {
       title: 'System Notification',
       slug: 'system-notification',
-      sender: 'noreply@sota.com',
+      sender: 'noreply@dx.com',
       subject: 'System Notification',
       body: `
         <html>
           <body>
             <h2>System Notification</h2>
             <p>Hello {{username}},</p>
-            <p>This is a system notification from SOTA.</p>
+            <p>This is a system notification from dx.</p>
             <p>{{message}}</p>
-            <p>Best regards,<br>SOTA Team</p>
+            <p>Best regards,<br>dx Team</p>
           </body>
         </html>
       `,
@@ -259,16 +259,16 @@ async function main() {
     {
       title: 'Welcome',
       slug: 'welcome',
-      sender: 'noreply@sota.com',
-      subject: 'Welcome to SOTA',
+      sender: 'noreply@dx.com',
+      subject: 'Welcome to dx',
       body: `
         <html>
           <body>
-            <h2>Welcome to SOTA!</h2>
+            <h2>Welcome to dx!</h2>
             <p>Hello {{username}},</p>
-            <p>Thank you for registering with SOTA. Please click the link below to activate your account:</p>
+            <p>Thank you for registering with dx. Please click the link below to activate your account:</p>
             <p>{{link}}</p>
-            <p>Best regards,<br>SOTA Team</p>
+            <p>Best regards,<br>dx Team</p>
           </body>
         </html>
       `,
@@ -277,16 +277,16 @@ async function main() {
     {
       title: 'New User',
       slug: 'new-user',
-      sender: 'noreply@sota.com',
-      subject: 'Welcome to SOTA',
+      sender: 'noreply@dx.com',
+      subject: 'Welcome to dx',
       body: `
         <html>
           <body>
-            <h2>Welcome to SOTA!</h2>
+            <h2>Welcome to dx!</h2>
             <p>Hello {{username}},</p>
-            <p>An account has been created for you on SOTA. Please click the link below to set your password:</p>
+            <p>An account has been created for you on dx. Please click the link below to set your password:</p>
             <p>{{link}}</p>
-            <p>Best regards,<br>SOTA Team</p>
+            <p>Best regards,<br>dx Team</p>
           </body>
         </html>
       `,
@@ -295,17 +295,17 @@ async function main() {
     {
       title: 'Two Factor Authentication Enabled',
       slug: 'two-fa-enabled',
-      sender: 'noreply@sota.com',
+      sender: 'noreply@dx.com',
       subject: 'Two-Factor Authentication Enabled',
       body: `
         <html>
           <body>
             <h2>Two-Factor Authentication Enabled</h2>
             <p>Hello {{username}},</p>
-            <p>Two-factor authentication has been successfully enabled for your SOTA account.</p>
+            <p>Two-factor authentication has been successfully enabled for your dx account.</p>
             <p>Your account is now more secure with an additional layer of protection.</p>
             <p>If you didn't enable this feature, please contact support immediately.</p>
-            <p>Best regards,<br>SOTA Team</p>
+            <p>Best regards,<br>dx Team</p>
           </body>
         </html>
       `,

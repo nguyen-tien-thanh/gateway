@@ -26,7 +26,7 @@ export class TwofaService {
     const secret = authenticator.generateSecret();
     const otpauthUrl = authenticator.keyuri(
       user.email,
-      process.env.TWOFA_APP_NAME || 'SOTA',
+      process.env.TWOFA_APP_NAME || 'dx',
       secret
     );
     await this.usersService.setTwoFactorAuthenticationSecret(secret, user.id);

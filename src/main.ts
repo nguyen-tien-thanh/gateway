@@ -24,14 +24,14 @@ async function bootstrap() {
       credentials: true
     });
     const swaggerConfig = new DocumentBuilder()
-      .setTitle(process.env.APP_NAME || 'SOTA')
-      .setDescription(process.env.APP_DESCRIPTION || 'Official SOTA API')
+      .setTitle(process.env.APP_NAME || 'dx')
+      .setDescription(process.env.APP_DESCRIPTION || 'Official dx API')
       .setVersion(process.env.APP_VERSION || 'v0.1')
       .addBearerAuth()
       .build();
     const customOptions: SwaggerCustomOptions = {
       swaggerOptions: { persistAuthorization: true },
-      customSiteTitle: process.env.APP_DESCRIPTION || 'Official SOTA API'
+      customSiteTitle: process.env.APP_DESCRIPTION || 'Official dx API'
     };
     const document = SwaggerModule.createDocument(app, swaggerConfig);
     SwaggerModule.setup('api', app, document, customOptions);

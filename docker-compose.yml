@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    container_name: sota-api
+    container_name: dx-api
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,10 +10,10 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-      - "7777:7777"
+      - '7777:7777'
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=mysql://root:password@mysql:3306/sota
+      - DATABASE_URL=mysql://root:password@mysql:3306/dx
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
@@ -25,62 +25,72 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - sota-network
+      - dx-network
 
   mysql:
-    container_name: sota-mysql
+    container_name: dx-mysql
     image: mysql:8.0
     environment:
       - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=sota
+      - MYSQL_DATABASE=dx
     ports:
-      - "3306:3306"
+      - '3306:3306'
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - sota-network
+      - dx-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
+      test:
+        [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-u',
+          'root',
+          '-ppassword'
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
-    container_name: sota-redis
+    container_name: dx-redis
     image: redis:alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis_data:/data
     networks:
-      - sota-network
+      - dx-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
 
   rabbitmq:
-    container_name: sota-rabbitmq
+    container_name: dx-rabbitmq
     image: rabbitmq:3.12-management-alpine
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
     ports:
-      - "5672:5672"   # AMQP port
-      - "15672:15672" # Management UI port
+      - '5672:5672' # AMQP port
+      - '15672:15672' # Management UI port
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - sota-network
+      - dx-network
     healthcheck:
-      test: ["CMD", "rabbitmqctl", "status"]
+      test: ['CMD', 'rabbitmqctl', 'status']
       interval: 30s
       timeout: 10s
       retries: 5
 
 networks:
-  sota-network:
+  dx-network:
     driver: bridge
 
 volumes:

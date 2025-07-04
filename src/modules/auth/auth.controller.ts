@@ -178,7 +178,7 @@ export class AuthController {
     const userCreateInput = {
       username: createUserDto.username,
       email: createUserDto.email,
-      password: createUserDto.password || 'Sota@123',
+      password: createUserDto.password || 'dx@123',
       name: createUserDto.name,
       address: '',
       contact: '',

@@ -1,8 +1,8 @@
 {
-  "name": "sota-api",
+  "name": "dx-api",
   "version": "0.0.1",
-  "description": "SOTA API",
-  "author": "sota <sota@gmail.com>",
+  "description": "dx API",
+  "author": "dx <dx@gmail.com>",
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
