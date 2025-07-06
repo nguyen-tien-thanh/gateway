@@ -171,7 +171,7 @@ model Unit {
 model Transcription {
   id                  Int     @id @default(autoincrement())
   callId              Int     @unique
-  transcription       String?
+  transcription       String? @db.Text
   transcriptionMarked Json?
 
   call Call @relation(fields: [callId], references: [id])
@@ -183,15 +183,15 @@ model Summary {
   id                Int     @id @default(autoincrement())
   callId            Int     @unique
   steps             Json?
-  callTopic         String?
-  callSummary       String?
+  callTopic         String? @db.Text
+  callSummary       String? @db.Text
   productCategory   String?
   productName       String?
   agentAttitude     Int?
   agentOverallScore Int?
   custSentiment     Int?
   custExperience    Int?
-  overallOutcome    String?
+  overallOutcome    String? @db.Text
 
   call Call @relation(fields: [callId], references: [id])
 

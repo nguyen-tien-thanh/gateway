@@ -27,9 +27,10 @@ RUN yarn install --production
 COPY . .
 COPY --from=development /usr/src/app/dist ./dist
 COPY --from=development /usr/src/app/node_modules/.prisma ./node_modules/.prisma
+COPY .env.prod ./.env
 
 RUN yarn prisma:generate
 
-EXPOSE 3000
+EXPOSE 7777
 
 CMD ["yarn", "start:prod"]
