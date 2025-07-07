@@ -1,8 +1,0 @@
-version: '3.8'
-
-services:
-  gateway:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: nguyentienthanh2909/371-gateway:latest
