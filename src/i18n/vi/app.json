@@ -30,5 +30,6 @@
   "status": "trạng thái",
   "email": "email",
   "name": "tên",
-  "roleId": "vai trò"
+  "roleId": "vai trò",
+  "calls": "cuộc gọi"
 }

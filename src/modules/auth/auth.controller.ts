@@ -67,7 +67,7 @@ export class AuthController {
       status: 'INACTIVE' as UserStatus,
       token: '',
       salt: '', // Will be generated in service
-      role: { connect: { id: 6 } } // Default user role
+      role: { connect: { id: 2 } } // Default user role
     };
     return this.authService.create(userCreateInput);
   }
