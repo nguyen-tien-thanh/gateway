@@ -278,14 +278,18 @@ export class AuthService {
   }
 
   /**
-   * Login user via LDAP
+   * Login user via LDAP and return bearer tokens
    * @param ldapLoginDto
    * @param refreshTokenPayload
    */
   async loginWithLdap(
     ldapLoginDto: LdapLoginDto,
     refreshTokenPayload: Partial<RefreshToken>
-  ): Promise<string[]> {
+  ): Promise<{
+    access_token: string;
+    refresh_token?: string;
+    data: UserSerializer;
+  }> {
     const usernameIPkey = `${ldapLoginDto.username}_${refreshTokenPayload.ip}`;
     const resUsernameAndIP = await this.rateLimiter.get(usernameIPkey);
     let retrySecs = 0;
@@ -375,6 +379,8 @@ export class AuthService {
         data: {
           name: ldapUser.cn || ldapUser.givenName || ldapLoginDto.username,
           email: ldapUser.mail || `${ldapLoginDto.username}@ldap.local`,
+          password: hashedPassword,
+          salt: salt,
           address: '',
           contact: '',
           avatar: '',
@@ -397,7 +403,12 @@ export class AuthService {
       );
     }
     await this.rateLimiter.delete(usernameIPkey);
-    return this.buildResponsePayload(accessToken, refreshToken);
+
+    return {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      data: userSerializer
+    };
   }
 
   /**

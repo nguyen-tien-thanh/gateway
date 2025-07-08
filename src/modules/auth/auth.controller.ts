@@ -276,11 +276,10 @@ export class AuthController {
       isRevoked: false,
       expires: new Date()
     };
-    const cookiePayload = await this.authService.loginWithLdap(
+    const tokenResponse = await this.authService.loginWithLdap(
       ldapLoginDto,
       refreshTokenPayload
     );
-    response.setHeader('Set-Cookie', cookiePayload);
-    return response.status(HttpStatus.NO_CONTENT).json({});
+    return response.status(HttpStatus.OK).json(tokenResponse);
   }
 }
