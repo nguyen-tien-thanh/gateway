@@ -80,6 +80,14 @@ export class I18nExceptionFilterPipe implements ExceptionFilter {
           error
         }
       });
+
+      // Return a fallback response when translation fails
+      const exceptionResponse = exception.getResponse() as any;
+      return {
+        statusCode: exception.getStatus(),
+        message: exceptionResponse.message || 'Internal server error',
+        error: 'Translation failed'
+      };
     }
   }
 

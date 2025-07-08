@@ -14,6 +14,10 @@
   "incorrectOldPassword": "Incorrect old password!",
   "badRequest": "Bad request, an error occurred please try again later!",
   "tooManyRequest": "Too many attempts, try again after {second} $t(exception.sec, {{\"count\": {second} }})!",
+  "sec": {
+    "one": "second",
+    "other": "seconds"
+  },
   "invalidRefreshToken": "Invalid refresh token!",
   "deleteDefaultError": "Cannot delete default item!",
   "refreshTokenExpired": "Refresh token has expired!",

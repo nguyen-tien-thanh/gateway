@@ -14,6 +14,10 @@
   "incorrectOldPassword": "Mật khẩu cũ không đúng!",
   "badRequest": "Yêu cầu sai, đã có lỗi xảy ra vui lòng thử lại sau!",
   "tooManyRequest": "Quá nhiều lần thử, thử lại sau {second} $t(exception.sec, {{\"count\": {second} }})!",
+  "sec": {
+    "one": "giây",
+    "other": "giây"
+  },
   "invalidRefreshToken": "Mã refresh token không hợp lệ!",
   "deleteDefaultError": "Không thể xóa mục mặc định!",
   "refreshTokenExpired": "Mã refresh token đã hết hạn!",

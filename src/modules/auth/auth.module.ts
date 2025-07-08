@@ -29,7 +29,7 @@ const LoginThrottleFactory = {
       points: Number(process.env.THROTTLE_LOGIN_LIMIT) || 5,
       duration:
         Number(process.env.THROTTLE_LOGIN_DURATION) || 60 * 60 * 24 * 30,
-      blockDuration: Number(process.env.THROTTLE_LOGIN_BLOCK_DURATION) || 3000
+      blockDuration: Number(process.env.THROTTLE_LOGIN_BLOCK_DURATION) || 300
     });
   }
 };
