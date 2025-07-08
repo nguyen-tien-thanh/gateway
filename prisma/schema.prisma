@@ -147,7 +147,7 @@ model Call {
 
 model Unit {
   id    Int    @id @default(autoincrement())
-  title String
+  title String @unique
   calls Call[]
 
   @@map("call_unit")
@@ -183,7 +183,7 @@ model Summary {
 
 model Status {
   id    Int    @id @default(autoincrement())
-  title String
+  title String @unique
   calls Call[]
 
   @@map("call_status")
@@ -191,7 +191,7 @@ model Status {
 
 model CallType {
   id    Int    @id @default(autoincrement())
-  title String
+  title String @unique
   calls Call[]
 
   @@map("call_type")
