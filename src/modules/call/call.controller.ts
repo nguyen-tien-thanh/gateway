@@ -41,7 +41,7 @@ export class CallController {
   findAll(@Filter() filter: IFilter, @GetUser() user: UserWithRole) {
     return this.callService.findAll({
       ...filter,
-      where: { ...filter.where, createdBy: user.id }
+      where: { ...filter.where, ...(user.ext && { ext: user.ext }) }
     });
   }
 

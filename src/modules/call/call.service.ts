@@ -36,8 +36,8 @@ export class CallService {
 
     const [calls, total] = await Promise.all([
       this.prismaService.call.findMany({
-        ...filter,
-        orderBy: { updatedDate: 'desc', ...filter.orderBy }
+        orderBy: { updatedDate: 'desc' },
+        ...filter
       }),
       this.prismaService.call.count({ where })
     ]);

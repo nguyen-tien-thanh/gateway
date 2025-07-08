@@ -25,6 +25,7 @@ CREATE TABLE `user` (
     INDEX `user_username_idx`(`username`),
     INDEX `user_email_idx`(`email`),
     INDEX `user_name_idx`(`name`),
+    INDEX `user_roleId_fkey`(`roleId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -63,6 +64,7 @@ CREATE TABLE `role_permission` (
     `roleId` INTEGER NOT NULL,
     `permissionId` INTEGER NOT NULL,
 
+    INDEX `role_permission_permissionId_fkey`(`permissionId`),
     UNIQUE INDEX `role_permission_roleId_permissionId_key`(`roleId`, `permissionId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -80,6 +82,7 @@ CREATE TABLE `refresh_token` (
 
     INDEX `refresh_token_browser_idx`(`browser`),
     INDEX `refresh_token_os_idx`(`os`),
+    INDEX `refresh_token_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -126,6 +129,10 @@ CREATE TABLE `call_call` (
     UNIQUE INDEX `call_call_crmId_key`(`crmId`),
     UNIQUE INDEX `call_call_summaryId_key`(`summaryId`),
     UNIQUE INDEX `call_call_queueId_key`(`queueId`),
+    INDEX `call_call_callTypeId_fkey`(`callTypeId`),
+    INDEX `call_call_createdBy_fkey`(`createdBy`),
+    INDEX `call_call_statusId_fkey`(`statusId`),
+    INDEX `call_call_unitId_fkey`(`unitId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -141,7 +148,7 @@ CREATE TABLE `call_unit` (
 CREATE TABLE `call_transcription` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `callId` INTEGER NOT NULL,
-    `transcription` VARCHAR(191) NULL,
+    `transcription` TEXT NULL,
     `transcriptionMarked` JSON NULL,
 
     UNIQUE INDEX `call_transcription_callId_key`(`callId`),
@@ -153,15 +160,15 @@ CREATE TABLE `call_summary` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `callId` INTEGER NOT NULL,
     `steps` JSON NULL,
-    `callTopic` VARCHAR(191) NULL,
-    `callSummary` VARCHAR(191) NULL,
+    `callTopic` TEXT NULL,
+    `callSummary` TEXT NULL,
     `productCategory` VARCHAR(191) NULL,
     `productName` VARCHAR(191) NULL,
     `agentAttitude` INTEGER NULL,
     `agentOverallScore` INTEGER NULL,
     `custSentiment` INTEGER NULL,
     `custExperience` INTEGER NULL,
-    `overallOutcome` VARCHAR(191) NULL,
+    `overallOutcome` TEXT NULL,
 
     UNIQUE INDEX `call_summary_callId_key`(`callId`),
     PRIMARY KEY (`id`)
@@ -187,16 +194,18 @@ CREATE TABLE `call_type` (
 CREATE TABLE `call_queue` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `callId` INTEGER NOT NULL,
-    `quanlyxe` JSON NULL,
-    `crm` JSON NULL,
+    `phone` VARCHAR(191) NULL,
     `plate` VARCHAR(191) NULL,
     `username` VARCHAR(191) NULL,
     `note` VARCHAR(191) NULL,
+    `quanlyxe` JSON NULL,
+    `crm` JSON NULL,
     `createdDate` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `createdBy` INTEGER NOT NULL,
     `updatedDate` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `call_queue_callId_key`(`callId`),
+    INDEX `call_queue_createdBy_fkey`(`createdBy`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -204,22 +213,22 @@ CREATE TABLE `call_queue` (
 ALTER TABLE `user` ADD CONSTRAINT `user_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `role`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `role_permission` ADD CONSTRAINT `role_permission_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `role`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `role_permission` ADD CONSTRAINT `role_permission_permissionId_fkey` FOREIGN KEY (`permissionId`) REFERENCES `permission`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `role_permission` ADD CONSTRAINT `role_permission_permissionId_fkey` FOREIGN KEY (`permissionId`) REFERENCES `permission`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `role_permission` ADD CONSTRAINT `role_permission_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `role`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `refresh_token` ADD CONSTRAINT `refresh_token_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `call_call` ADD CONSTRAINT `call_call_statusId_fkey` FOREIGN KEY (`statusId`) REFERENCES `call_status`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `call_call` ADD CONSTRAINT `call_call_callTypeId_fkey` FOREIGN KEY (`callTypeId`) REFERENCES `call_type`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `call_call` ADD CONSTRAINT `call_call_createdBy_fkey` FOREIGN KEY (`createdBy`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `call_call` ADD CONSTRAINT `call_call_callTypeId_fkey` FOREIGN KEY (`callTypeId`) REFERENCES `call_type`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `call_call` ADD CONSTRAINT `call_call_statusId_fkey` FOREIGN KEY (`statusId`) REFERENCES `call_status`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `call_call` ADD CONSTRAINT `call_call_unitId_fkey` FOREIGN KEY (`unitId`) REFERENCES `call_unit`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
@@ -231,7 +240,7 @@ ALTER TABLE `call_transcription` ADD CONSTRAINT `call_transcription_callId_fkey`
 ALTER TABLE `call_summary` ADD CONSTRAINT `call_summary_callId_fkey` FOREIGN KEY (`callId`) REFERENCES `call_call`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `call_queue` ADD CONSTRAINT `call_queue_createdBy_fkey` FOREIGN KEY (`createdBy`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `call_queue` ADD CONSTRAINT `call_queue_callId_fkey` FOREIGN KEY (`callId`) REFERENCES `call_call`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `call_queue` ADD CONSTRAINT `call_queue_callId_fkey` FOREIGN KEY (`callId`) REFERENCES `call_call`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `call_queue` ADD CONSTRAINT `call_queue_createdBy_fkey` FOREIGN KEY (`createdBy`) REFERENCES `user`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
