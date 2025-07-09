@@ -1,0 +1,12 @@
+import { Module } from '@nestjs/common';
+import { UnitService } from './unit.service';
+import { UnitController } from './unit.controller';
+import { PrismaService } from 'src/shared/prisma/prisma.service';
+
+@Module({
+  imports: [],
+  controllers: [UnitController],
+  providers: [UnitService, PrismaService],
+  exports: [UnitService]
+})
+export class UnitModule {}

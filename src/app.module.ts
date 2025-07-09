@@ -27,6 +27,12 @@ import { CustomValidationPipe } from './common/pipes/custom-validation.pipe';
 import { I18nExceptionFilterPipe } from './common/pipes/i18n-exception-filter.pipe';
 import { RabbitMQModule } from './shared/rabbitmq/rabbitmq.module';
 import { CallModule } from './modules/call/call.module';
+import { UnitModule } from './modules/unit/unit.module';
+import { CallTypeModule } from './modules/call-type/call-type.module';
+import { StatusModule } from './modules/status/status.module';
+import { QueueModule } from './modules/queue/queue.module';
+import { SummaryModule } from './modules/summary/summary.module';
+import { TranscriptionModule } from './modules/transcription/transcription.module';
 
 @Module({
   imports: [
@@ -61,7 +67,13 @@ import { CallModule } from './modules/call/call.module';
     RefreshTokenModule,
     TwofaModule,
     DashboardModule,
-    CallModule
+    CallModule,
+    UnitModule,
+    CallTypeModule,
+    StatusModule,
+    QueueModule,
+    SummaryModule,
+    TranscriptionModule
   ],
   providers: [
     {
