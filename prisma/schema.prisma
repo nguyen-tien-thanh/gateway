@@ -115,6 +115,7 @@ model EmailTemplate {
 
 model Call {
   id              Int            @id @unique
+  phone           String?
   hotline         String?
   ext             Int?
   callStartTime   DateTime

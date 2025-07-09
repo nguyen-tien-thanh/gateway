@@ -108,6 +108,7 @@ CREATE TABLE `email_template` (
 -- CreateTable
 CREATE TABLE `call_call` (
     `id` INTEGER NOT NULL,
+    `phone` VARCHAR(191) NULL,
     `hotline` VARCHAR(191) NULL,
     `ext` INTEGER NULL,
     `callStartTime` DATETIME(3) NOT NULL,
@@ -141,6 +142,7 @@ CREATE TABLE `call_unit` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(191) NOT NULL,
 
+    UNIQUE INDEX `call_unit_title_key`(`title`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -179,6 +181,7 @@ CREATE TABLE `call_status` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(191) NOT NULL,
 
+    UNIQUE INDEX `call_status_title_key`(`title`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -187,6 +190,7 @@ CREATE TABLE `call_type` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(191) NOT NULL,
 
+    UNIQUE INDEX `call_type_title_key`(`title`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
