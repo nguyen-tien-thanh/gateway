@@ -127,7 +127,7 @@ model Call {
   transcriptionId Int?           @unique
   crmId           Int?           @unique
   summaryId       Int?           @unique
-  statusId        Int?
+  statusId        Int?           @default(1)
   callTypeId      Int?
   queueId         Int?           @unique
   unitId          Int?
