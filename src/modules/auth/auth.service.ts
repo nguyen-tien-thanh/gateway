@@ -311,6 +311,21 @@ export class AuthService {
       );
     }
 
+    // Check inactive user before LDAP login
+    let user = await this.prisma.user.findUnique({
+      where: { username: ldapLoginDto.username },
+      include: {
+        role: { include: { permissions: { include: { permission: true } } } }
+      }
+    });
+
+    if (user && user.status !== UserStatus.ACTIVE) {
+      throw new UnauthorizedException(
+        ExceptionTitleList.UserInactive,
+        StatusCodesList.UserInactive
+      );
+    }
+
     // Authenticate with LDAP
     const ldapConfig = this.ldapService.getLdapConfig();
     const ldapUser = await this.ldapService.authenticate(
@@ -339,13 +354,7 @@ export class AuthService {
     }
 
     // Find or create user in local database
-    let user = await this.prisma.user.findUnique({
-      where: { username: ldapLoginDto.username },
-      include: {
-        role: { include: { permissions: { include: { permission: true } } } }
-      }
-    });
-
+    // (user may be null if not found above)
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(ldapLoginDto.password, salt);
     if (!user) {
@@ -368,12 +377,7 @@ export class AuthService {
         }
       });
     } else {
-      if (user.status !== UserStatus.ACTIVE) {
-        throw new UnauthorizedException(
-          ExceptionTitleList.UserInactive,
-          StatusCodesList.UserInactive
-        );
-      }
+      // No need to check status again, already checked above
       user = await this.prisma.user.update({
         where: { id: user.id },
         data: {
