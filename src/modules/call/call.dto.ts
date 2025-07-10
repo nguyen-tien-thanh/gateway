@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
 import {
-  IsEnum,
   IsOptional,
   IsString,
   IsDateString,
@@ -14,11 +13,20 @@ export class CallDto {
   @IsPositive()
   id: number;
 
-  @ApiPropertyOptional({ description: 'Type of call' })
+  @ApiPropertyOptional({ description: 'Phone number' })
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @ApiPropertyOptional({ description: 'Hotline number' })
+  @IsOptional()
+  @IsString()
+  hotline?: string;
+
+  @ApiPropertyOptional({ description: 'Extension number' })
   @IsOptional()
   @IsInt()
-  @IsPositive()
-  callTypeId?: number;
+  ext?: number;
 
   @ApiProperty({ description: 'Start time of the call' })
   @IsDateString()
@@ -35,29 +43,10 @@ export class CallDto {
   @IsString()
   url?: string;
 
-  @ApiPropertyOptional({ description: 'ID of the user who created the call' })
-  @IsOptional()
+  @ApiProperty({ description: 'ID of the user who created the call' })
   @IsInt()
   @IsPositive()
   createdBy: number;
-
-  @ApiPropertyOptional({ description: 'ID of the transcription record' })
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  transcriptionId?: number;
-
-  @ApiPropertyOptional({ description: 'ID of the CRM record' })
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  crmId?: number;
-
-  @ApiPropertyOptional({ description: 'ID of the summary record' })
-  @IsOptional()
-  @IsInt()
-  @IsPositive()
-  summaryId?: number;
 
   @ApiPropertyOptional({ description: 'ID of the status record' })
   @IsOptional()
@@ -65,21 +54,80 @@ export class CallDto {
   @IsPositive()
   statusId?: number;
 
-  @ApiPropertyOptional({ description: 'ID of the queue record' })
+  @ApiPropertyOptional({ description: 'ID of the type record' })
   @IsOptional()
   @IsInt()
   @IsPositive()
-  queueId?: number;
+  typeId?: number;
+
+  @ApiPropertyOptional({ description: 'ID of the unit record' })
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  unitId?: number;
 }
 
-export class CreateCallDto extends CallDto {
+export class CreateCallDto {
+  @ApiProperty({ description: 'Unique identifier for the call' })
+  @IsInt()
+  @IsPositive()
+  id: number;
+
+  @ApiPropertyOptional({ description: 'Phone number' })
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @ApiPropertyOptional({ description: 'Hotline number' })
+  @IsOptional()
+  @IsString()
+  hotline?: string;
+
+  @ApiPropertyOptional({ description: 'Extension number' })
+  @IsOptional()
+  @IsInt()
+  ext?: number;
+
+  @ApiProperty({ description: 'Start time of the call' })
+  @IsDateString()
+  callStartTime: Date;
+
+  @ApiPropertyOptional({ description: 'Duration of the call in seconds' })
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  callDuration?: number;
+
+  @ApiPropertyOptional({ description: 'URL associated with the call' })
+  @IsOptional()
+  @IsString()
+  url?: string;
+
   @ApiProperty({ description: 'ID of the user who created the call' })
   @IsInt()
   @IsPositive()
   createdBy: number;
+
+  @ApiPropertyOptional({ description: 'ID of the status record' })
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  statusId?: number;
+
+  @ApiPropertyOptional({ description: 'ID of the type record' })
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  typeId?: number;
+
+  @ApiPropertyOptional({ description: 'ID of the unit record' })
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  unitId?: number;
 }
 
-export class UpdateCallDto extends PartialType(CallDto) {
+export class UpdateCallDto extends PartialType(CreateCallDto) {
   @ApiProperty({ description: 'ID of the user who updated the call' })
   @IsInt()
   @IsPositive()

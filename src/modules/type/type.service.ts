@@ -3,32 +3,32 @@ import {
   Injectable,
   NotFoundException
 } from '@nestjs/common';
-import { CreateCallTypeDto, UpdateCallTypeDto } from './call-type.dto';
+import { CreateTypeDto, UpdateTypeDto } from './type.dto';
 import { IFilter } from 'src/common/decorators/filter.decorator';
 import { PrismaService } from 'src/shared/prisma/prisma.service';
 import { Pagination } from 'src/shared/paginate/pagination';
 import { ExceptionTitleList } from 'src/common/constants/exception-title-list.constants';
 
 @Injectable()
-export class CallTypeService {
+export class TypeService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async count(filter: IFilter) {
-    const res = await this.prismaService.callType.count({
+    const res = await this.prismaService.type.count({
       where: filter.where
     });
 
     return { results: res };
   }
 
-  async create(createCallTypeDto: CreateCallTypeDto) {
-    const existed = await this.prismaService.callType.findFirst({
-      where: { title: createCallTypeDto.title }
+  async create(createTypeDto: CreateTypeDto) {
+    const existed = await this.prismaService.type.findFirst({
+      where: { title: createTypeDto.title }
     });
     if (existed) throw new ConflictException(ExceptionTitleList.Conflict);
 
-    const res = await this.prismaService.callType.create({
-      data: createCallTypeDto
+    const res = await this.prismaService.type.create({
+      data: createTypeDto
     });
     return res;
   }
@@ -36,16 +36,16 @@ export class CallTypeService {
   async findAll(filter: IFilter) {
     const { take = 10, skip = 0, where } = filter;
 
-    const [callTypes, total] = await Promise.all([
-      this.prismaService.callType.findMany({
+    const [types, total] = await Promise.all([
+      this.prismaService.type.findMany({
         orderBy: { id: 'desc' },
         ...filter
       }),
-      this.prismaService.callType.count({ where })
+      this.prismaService.type.count({ where })
     ]);
 
     return new Pagination({
-      results: callTypes,
+      results: types,
       currentPage: skip,
       pageSize: take,
       totalItems: total,
@@ -55,41 +55,41 @@ export class CallTypeService {
   }
 
   async findOne(id: number) {
-    const res = await this.prismaService.callType.findUnique({
+    const res = await this.prismaService.type.findUnique({
       where: { id }
     });
     if (!res) throw new NotFoundException(ExceptionTitleList.NotFound);
     return res;
   }
 
-  async update(id: number, updateCallTypeDto: UpdateCallTypeDto) {
-    const existed = await this.prismaService.callType.findFirst({
+  async update(id: number, updateTypeDto: UpdateTypeDto) {
+    const existed = await this.prismaService.type.findFirst({
       where: { id }
     });
     if (!existed) throw new NotFoundException(ExceptionTitleList.NotFound);
 
     // Check for title conflicts if title is being updated
-    if (updateCallTypeDto.title) {
-      const titleExists = await this.prismaService.callType.findFirst({
-        where: { title: updateCallTypeDto.title, NOT: { id } }
+    if (updateTypeDto.title) {
+      const titleExists = await this.prismaService.type.findFirst({
+        where: { title: updateTypeDto.title, NOT: { id } }
       });
       if (titleExists) throw new ConflictException(ExceptionTitleList.Conflict);
     }
 
-    const res = await this.prismaService.callType.update({
+    const res = await this.prismaService.type.update({
       where: { id },
-      data: updateCallTypeDto
+      data: updateTypeDto
     });
     return res;
   }
 
   async remove(id: number) {
-    const existed = await this.prismaService.callType.findFirst({
+    const existed = await this.prismaService.type.findFirst({
       where: { id }
     });
     if (!existed) throw new NotFoundException(ExceptionTitleList.NotFound);
 
-    const res = await this.prismaService.callType.delete({ where: { id } });
+    const res = await this.prismaService.type.delete({ where: { id } });
     return res;
   }
 }

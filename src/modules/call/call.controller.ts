@@ -59,4 +59,14 @@ export class CallController {
   remove(@Param('id') id: string) {
     return this.callService.remove(+id);
   }
+
+  @Patch(':id/restore')
+  restore(@Param('id') id: string) {
+    return this.callService.restore(+id);
+  }
+
+  @Delete(':id/hard')
+  hardDelete(@Param('id') id: string) {
+    return this.callService.hardDelete(+id);
+  }
 }

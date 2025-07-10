@@ -84,7 +84,6 @@ export class QueueService {
     const existed = await this.prismaService.queue.findFirst({ where: { id } });
     if (!existed) throw new NotFoundException(ExceptionTitleList.NotFound);
 
-    // Check for callId conflicts if callId is being updated
     if (updateQueueDto.callId) {
       const callIdExists = await this.prismaService.queue.findFirst({
         where: { callId: updateQueueDto.callId, NOT: { id } }
@@ -101,6 +100,28 @@ export class QueueService {
   }
 
   async remove(id: number) {
+    const existed = await this.prismaService.queue.findFirst({ where: { id } });
+    if (!existed) throw new NotFoundException(ExceptionTitleList.NotFound);
+
+    const res = await this.prismaService.queue.update({
+      where: { id },
+      data: { deletedDate: new Date() }
+    });
+    return res;
+  }
+
+  async restore(id: number) {
+    const existed = await this.prismaService.queue.findFirst({ where: { id } });
+    if (!existed) throw new NotFoundException(ExceptionTitleList.NotFound);
+
+    const res = await this.prismaService.queue.update({
+      where: { id },
+      data: { deletedDate: null }
+    });
+    return res;
+  }
+
+  async hardDelete(id: number) {
     const existed = await this.prismaService.queue.findFirst({ where: { id } });
     if (!existed) throw new NotFoundException(ExceptionTitleList.NotFound);
 

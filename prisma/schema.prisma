@@ -27,6 +27,8 @@ model User {
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
   ext               Int?
+  
+  // Relations
   calls             Call[]
   queues            Queue[]
   refreshTokens     RefreshToken[]
@@ -114,32 +116,33 @@ model EmailTemplate {
 }
 
 model Call {
-  id              Int            @id @unique
+  id              Int       @id @unique
   phone           String?
   hotline         String?
   ext             Int?
   callStartTime   DateTime
   callDuration    Int?
   url             String?
-  createdDate     DateTime       @default(now())
+  createdDate     DateTime  @default(now())
   createdBy       Int
-  updatedDate     DateTime       @updatedAt
-  transcriptionId Int?           @unique
-  crmId           Int?           @unique
-  summaryId       Int?           @unique
-  statusId        Int?           @default(1)
-  callTypeId      Int?
-  queueId         Int?           @unique
+  updatedDate     DateTime  @updatedAt
+  deletedDate     DateTime?
+  statusId        Int?      @default(1)
+  typeId          Int?
   unitId          Int?
-  callType        CallType?      @relation(fields: [callTypeId], references: [id])
-  user            User           @relation(fields: [createdBy], references: [id])
-  status          Status?        @relation(fields: [statusId], references: [id])
-  unit            Unit?          @relation(fields: [unitId], references: [id])
+  
+  // Relations
+  type            Type?     @relation(fields: [typeId], references: [id])
+  user            User      @relation(fields: [createdBy], references: [id])
+  status          Status?   @relation(fields: [statusId], references: [id])
+  unit            Unit?     @relation(fields: [unitId], references: [id])
+  
+  // One-to-one relations (moved foreign keys here to avoid circular references)
   queue           Queue?
   summary         Summary?
   transcription   Transcription?
 
-  @@index([callTypeId], map: "call_call_callTypeId_fkey")
+  @@index([typeId], map: "call_call_typeId_fkey")
   @@index([createdBy], map: "call_call_createdBy_fkey")
   @@index([statusId], map: "call_call_statusId_fkey")
   @@index([unitId], map: "call_call_unitId_fkey")
@@ -159,7 +162,9 @@ model Transcription {
   callId              Int     @unique
   transcription       String? @db.Text
   transcriptionMarked Json?
-  call                Call    @relation(fields: [callId], references: [id])
+  
+  // Relation
+  call                Call    @relation(fields: [callId], references: [id], onDelete: Cascade)
 
   @@map("call_transcription")
 }
@@ -177,7 +182,9 @@ model Summary {
   custSentiment     Int?
   custExperience    Int?
   overallOutcome    String? @db.Text
-  call              Call    @relation(fields: [callId], references: [id])
+  
+  // Relation
+  call              Call    @relation(fields: [callId], references: [id], onDelete: Cascade)
 
   @@map("call_summary")
 }
@@ -190,7 +197,7 @@ model Status {
   @@map("call_status")
 }
 
-model CallType {
+model Type {
   id    Int    @id @default(autoincrement())
   title String @unique
   calls Call[]
@@ -210,7 +217,10 @@ model Queue {
   createdDate DateTime @default(now())
   createdBy   Int
   updatedDate DateTime @updatedAt
-  call        Call     @relation(fields: [callId], references: [id])
+  deletedDate DateTime?
+  
+  // Relations
+  call        Call     @relation(fields: [callId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [createdBy], references: [id])
 
   @@index([createdBy], map: "call_queue_createdBy_fkey")

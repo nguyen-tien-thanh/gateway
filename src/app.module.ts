@@ -28,7 +28,7 @@ import { I18nExceptionFilterPipe } from './common/pipes/i18n-exception-filter.pi
 import { RabbitMQModule } from './shared/rabbitmq/rabbitmq.module';
 import { CallModule } from './modules/call/call.module';
 import { UnitModule } from './modules/unit/unit.module';
-import { CallTypeModule } from './modules/call-type/call-type.module';
+import { TypeModule } from './modules/type/type.module';
 import { StatusModule } from './modules/status/status.module';
 import { QueueModule } from './modules/queue/queue.module';
 import { SummaryModule } from './modules/summary/summary.module';
@@ -69,7 +69,7 @@ import { TranscriptionModule } from './modules/transcription/transcription.modul
     DashboardModule,
     CallModule,
     UnitModule,
-    CallTypeModule,
+    TypeModule,
     StatusModule,
     QueueModule,
     SummaryModule,

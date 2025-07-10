@@ -64,4 +64,14 @@ export class QueueController {
   remove(@Param('id') id: string) {
     return this.queueService.remove(+id);
   }
+
+  @Patch(':id/restore')
+  restore(@Param('id') id: string) {
+    return this.queueService.restore(+id);
+  }
+
+  @Delete(':id/hard')
+  hardDelete(@Param('id') id: string) {
+    return this.queueService.hardDelete(+id);
+  }
 }

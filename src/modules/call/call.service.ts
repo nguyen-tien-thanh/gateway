@@ -61,7 +61,8 @@ export class CallService {
         summary: true,
         status: true,
         queue: true,
-        callType: true
+        type: true,
+        unit: true
       }
     });
     if (!res) throw new NotFoundException(ExceptionTitleList.NotFound);
@@ -80,6 +81,28 @@ export class CallService {
   }
 
   async remove(id: number) {
+    const existed = await this.prismaService.call.findFirst({ where: { id } });
+    if (!existed) throw new NotFoundException(ExceptionTitleList.NotFound);
+
+    const res = await this.prismaService.call.update({
+      where: { id },
+      data: { deletedDate: new Date() }
+    });
+    return res;
+  }
+
+  async restore(id: number) {
+    const existed = await this.prismaService.call.findFirst({ where: { id } });
+    if (!existed) throw new NotFoundException(ExceptionTitleList.NotFound);
+
+    const res = await this.prismaService.call.update({
+      where: { id },
+      data: { deletedDate: null }
+    });
+    return res;
+  }
+
+  async hardDelete(id: number) {
     const existed = await this.prismaService.call.findFirst({ where: { id } });
     if (!existed) throw new NotFoundException(ExceptionTitleList.NotFound);
 
