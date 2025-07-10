@@ -127,6 +127,7 @@ model Call {
   createdBy       Int
   updatedDate     DateTime  @updatedAt
   deletedDate     DateTime?
+  crmId           Int?      @unique
   statusId        Int?      @default(1)
   typeId          Int?
   unitId          Int?
