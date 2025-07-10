@@ -174,6 +174,75 @@ async function main() {
     }
   ];
 
+  const status = [
+    {
+      id: 1,
+      title: 'NEW'
+    },
+    {
+      id: 2,
+      title: 'EMPTY'
+    },
+    {
+      id: 3,
+      title: 'NOACCOUNT'
+    },
+    {
+      id: 4,
+      title: 'CREATED'
+    }
+  ];
+
+  const types = [
+    {
+      id: 1,
+      title: 'INBOUND'
+    },
+    {
+      id: 2,
+      title: 'OUTBOUND'
+    },
+    {
+      id: 3,
+      title: 'PEER'
+    }
+  ];
+
+  const unit = [
+    {
+      id: 1,
+      title: 'LBS'
+    },
+    {
+      id: 2,
+      title: 'AUTO'
+    }
+  ];
+
+  for (const statusData of status) {
+    await prisma.status.upsert({
+      where: { id: statusData.id },
+      update: {},
+      create: statusData
+    });
+  }
+
+  for (const typeData of types) {
+    await prisma.type.upsert({
+      where: { id: typeData.id },
+      update: {},
+      create: typeData
+    });
+  }
+
+  for (const unitData of unit) {
+    await prisma.unit.upsert({
+      where: { id: unitData.id },
+      update: {},
+      create: unitData
+    });
+  }
+
   // Create roles first
   for (const roleData of roles) {
     console.log(`Creating role ${roleData.name}...`);
@@ -214,6 +283,31 @@ async function main() {
   }
 
   const adminRole = await prisma.role.findFirst({ where: { name: 'ADMIN' } });
+  const csRole = await prisma.role.findFirst({ where: { name: 'CS' } });
+
+  const callPermissions = permissions.filter((p) => p.resource === 'calls');
+  for (const permissionData of callPermissions) {
+    const permission = await prisma.permission.findFirst({
+      where: {
+        resource: permissionData.resource,
+        description: permissionData.description
+      }
+    });
+
+    if (permission) {
+      console.log(`Assigning ${permission.description} to CS role...`);
+      await prisma.rolePermission.upsert({
+        where: {
+          roleId_permissionId: {
+            roleId: csRole.id,
+            permissionId: permission.id
+          }
+        },
+        update: {},
+        create: { roleId: csRole.id, permissionId: permission.id }
+      });
+    }
+  }
 
   for (const permissionData of permissions) {
     console.log(`Creating permission ${permissionData.description}...`);
