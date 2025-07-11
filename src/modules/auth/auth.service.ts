@@ -416,6 +416,35 @@ export class AuthService {
   }
 
   /**
+   * Refresh LDAP token
+   * @param refreshTokenDto
+   * @param refreshTokenPayload
+   */
+  async refreshLdapToken(
+    refreshTokenDto: RefreshToken,
+    refreshTokenPayload: Partial<RefreshToken>
+  ) {
+    const existingRefreshToken =
+      await this.refreshTokenService.resolveRefreshToken(
+        refreshTokenDto.id.toString()
+      );
+    const user = existingRefreshToken.user;
+
+    const userSerializer = this.transformUser(user as unknown as UserWithRole);
+    const accessToken = await this.generateAccessToken(userSerializer);
+    const refreshToken = await this.refreshTokenService.generateRefreshToken(
+      userSerializer,
+      refreshTokenPayload
+    );
+
+    return {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      data: userSerializer
+    };
+  }
+
+  /**
    * Transform user to UserSerializer
    * @param user
    */

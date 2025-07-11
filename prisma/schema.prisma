@@ -27,8 +27,6 @@ model User {
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
   ext               Int?
-  
-  // Relations
   calls             Call[]
   queues            Queue[]
   refreshTokens     RefreshToken[]
@@ -116,32 +114,28 @@ model EmailTemplate {
 }
 
 model Call {
-  id              Int       @id @unique
-  phone           String?
-  hotline         String?
-  ext             Int?
-  callStartTime   DateTime
-  callDuration    Int?
-  url             String?
-  createdDate     DateTime  @default(now())
-  createdBy       Int
-  updatedDate     DateTime  @updatedAt
-  deletedDate     DateTime?
-  crmId           Int?      @unique
-  statusId        Int?      @default(1)
-  typeId          Int?
-  unitId          Int?
-  
-  // Relations
-  type            Type?     @relation(fields: [typeId], references: [id])
-  user            User      @relation(fields: [createdBy], references: [id])
-  status          Status?   @relation(fields: [statusId], references: [id])
-  unit            Unit?     @relation(fields: [unitId], references: [id])
-  
-  // One-to-one relations (moved foreign keys here to avoid circular references)
-  queue           Queue?
-  summary         Summary?
-  transcription   Transcription?
+  id            Int            @id @unique
+  hotline       String?
+  ext           Int?
+  callStartTime DateTime
+  callDuration  Int?
+  url           String?
+  createdDate   DateTime       @default(now())
+  createdBy     Int
+  updatedDate   DateTime       @updatedAt
+  crmId         Int?           @unique
+  statusId      Int?           @default(1)
+  unitId        Int?
+  deletedDate   DateTime?
+  phone         String?
+  typeId        Int?
+  user          User           @relation(fields: [createdBy], references: [id])
+  status        Status?        @relation(fields: [statusId], references: [id])
+  type          Type?          @relation(fields: [typeId], references: [id])
+  unit          Unit?          @relation(fields: [unitId], references: [id])
+  queue         Queue?
+  summary       Summary?
+  transcription Transcription?
 
   @@index([typeId], map: "call_call_typeId_fkey")
   @@index([createdBy], map: "call_call_createdBy_fkey")
@@ -163,8 +157,6 @@ model Transcription {
   callId              Int     @unique
   transcription       String? @db.Text
   transcriptionMarked Json?
-  
-  // Relation
   call                Call    @relation(fields: [callId], references: [id], onDelete: Cascade)
 
   @@map("call_transcription")
@@ -183,8 +175,6 @@ model Summary {
   custSentiment     Int?
   custExperience    Int?
   overallOutcome    String? @db.Text
-  
-  // Relation
   call              Call    @relation(fields: [callId], references: [id], onDelete: Cascade)
 
   @@map("call_summary")
@@ -207,22 +197,20 @@ model Type {
 }
 
 model Queue {
-  id          Int      @id @default(autoincrement())
-  callId      Int      @unique
-  phone       String?
-  plate       String?
-  username    String?
-  note        String?  @db.Text
+  id          Int       @id @default(autoincrement())
+  callId      Int       @unique
   quanlyxe    Json?
   crm         Json?
-  createdDate DateTime @default(now())
+  plate       String?
+  username    String?
+  note        String?   @db.Text
+  createdDate DateTime  @default(now())
   createdBy   Int
-  updatedDate DateTime @updatedAt
+  updatedDate DateTime  @updatedAt
+  phone       String?
   deletedDate DateTime?
-  
-  // Relations
-  call        Call     @relation(fields: [callId], references: [id], onDelete: Cascade)
-  user        User     @relation(fields: [createdBy], references: [id])
+  call        Call      @relation(fields: [callId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [createdBy], references: [id])
 
   @@index([createdBy], map: "call_queue_createdBy_fkey")
   @@map("call_queue")

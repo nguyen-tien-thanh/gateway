@@ -282,4 +282,27 @@ export class AuthController {
     );
     return response.status(HttpStatus.OK).json(tokenResponse);
   }
+
+  @Post('/auth/ldap-refresh')
+  async ldapRefresh(
+    @Req() req: Request,
+    @Res() response: Response,
+    @Body() refreshTokenDto: RefreshToken
+  ) {
+    const ua = UAParser(req.headers['user-agent']);
+    const refreshTokenPayload: Partial<RefreshToken> = {
+      ip: req.ip,
+      userAgent: JSON.stringify(ua),
+      browser: ua.browser.name,
+      os: ua.os.name,
+      userId: 0, // Will be set by service
+      isRevoked: false,
+      expires: new Date()
+    };
+    const tokenResponse = await this.authService.refreshLdapToken(
+      refreshTokenDto,
+      refreshTokenPayload
+    );
+    return response.status(HttpStatus.OK).json(tokenResponse);
+  }
 }
