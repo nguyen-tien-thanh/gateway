@@ -212,7 +212,7 @@ model Queue {
   phone       String?
   plate       String?
   username    String?
-  note        String?
+  note        String?  @db.Text
   quanlyxe    Json?
   crm         Json?
   createdDate DateTime @default(now())
