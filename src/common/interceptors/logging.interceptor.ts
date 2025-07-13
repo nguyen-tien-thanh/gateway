@@ -29,25 +29,11 @@ export class LoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<Request>();
     const response = context.switchToHttp().getResponse<Response>();
-    const { method, url, ip } = request;
-    // const userAgent = headers['user-agent'] || '';
+    const { method, url, ip, body, headers } = request;
     const startTime = Date.now();
 
     const user = (request as any).user;
-    const userInfo = user ? `${user.username} (ID: ${user.id})` : 'anonymous';
-
-    // const controllerName = context.getClass().name;
-    // const handlerName = context.getHandler().name;
-
-    // this.logger.log(
-    //   `\x1b[36m[START]\x1b[0m ${method} ${url} - ${controllerName}.${handlerName} - ${userInfo} - ${ip}`
-    // );
-
-    // this.logger.debug(
-    //   `\x1b[34m[REQ]\x1b[0m UA: ${userAgent}, Type: ${
-    //     headers['content-type'] || 'none'
-    //   }, Length: ${headers['content-length'] || 'unknown'}`
-    // );
+    const userInfo = user ? `${user.username} (ID: ${user.id})` : '';
 
     return next.handle().pipe(
       tap((data) => {
@@ -69,17 +55,47 @@ export class LoggingInterceptor implements NestInterceptor {
           }
         }
 
-        this.logger.log(
-          `\x1b[32m[OK]\x1b[0m ${method} ${url} - ${statusCode} - ${duration}ms - ${userInfo}`
-        );
+        // Prepare body info for POST/PATCH/PUT (limited)
+        let bodyInfo = '';
+        if (
+          ['POST', 'PATCH', 'PUT'].includes(method) &&
+          body &&
+          Object.keys(body).length > 0
+        ) {
+          try {
+            const maxBodyLength = 500;
+            const bodyPreview = this.safeStringify(body).substring(
+              0,
+              maxBodyLength
+            );
+            bodyInfo = ` | Body: ${bodyPreview}${
+              this.safeStringify(body).length > maxBodyLength ? '...' : ''
+            }`;
+          } catch (error) {
+            bodyInfo = ' | Body: [Unable to serialize]';
+          }
+        }
 
-        // this.logger.debug(
-        //   `\x1b[35m[PERF]\x1b[0m ${duration}ms | Size: ${size} bytes | Heap: ${(
-        //     process.memoryUsage().heapUsed /
-        //     1024 /
-        //     1024
-        //   ).toFixed(2)}MB`
-        // );
+        // Prepare response info (always log, limited)
+        let respInfo = '';
+        if (size < 1000 && data) {
+          try {
+            const maxRespLength = 50;
+            const responsePreview = this.safeStringify(data).substring(
+              0,
+              maxRespLength
+            );
+            respInfo = ` | Resp: ${responsePreview}${
+              this.safeStringify(data).length > maxRespLength ? '...' : ''
+            }`;
+          } catch (error) {
+            respInfo = ' | Resp: [Unable to serialize]';
+          }
+        }
+
+        this.logger.log(
+          `\x1b[32m[OK]\x1b[0m ${method} ${url} - ${statusCode} - ${duration}ms - ${userInfo}${bodyInfo}${respInfo}`
+        );
 
         if (duration > 1000) {
           const level = duration > 5000 ? '\x1b[31m[SLOW]' : '\x1b[33m[SLOW]';
@@ -95,28 +111,21 @@ export class LoggingInterceptor implements NestInterceptor {
             ).toFixed(2)}MB`
           );
         }
-
-        if (process.env.NODE_ENV === 'development' && size < 1000 && data) {
-          try {
-            const responsePreview = this.safeStringify(data).substring(0, 500);
-            this.logger.debug(
-              `\x1b[34m[RESP]\x1b[0m ${responsePreview}${
-                size > 500 ? '...' : ''
-              }`
-            );
-          } catch (error) {
-            this.logger.debug(
-              `\x1b[34m[RESP]\x1b[0m [Unable to serialize response]`
-            );
-          }
-        }
       }),
       catchError((error) => {
         const duration = Date.now() - startTime;
-        // Get status code safely - don't rely on response.statusCode if headers are already sent
-        const statusCode = response.headersSent
-          ? error.status || error.statusCode || 500
-          : response.statusCode || 500;
+
+        // Get the correct status code from the error
+        let statusCode = 500;
+        if (error.status) {
+          statusCode = error.status;
+        } else if (error.statusCode) {
+          statusCode = error.statusCode;
+        } else if (error.getStatus) {
+          statusCode = error.getStatus();
+        } else if (response.headersSent) {
+          statusCode = response.statusCode;
+        }
 
         this.logger.error(
           `\x1b[31m[ERR]\x1b[0m ${method} ${url} - ${statusCode} - ${duration}ms - ${userInfo} - ${error.message}`
