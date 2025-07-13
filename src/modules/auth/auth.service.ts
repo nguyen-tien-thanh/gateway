@@ -178,7 +178,11 @@ export class AuthService {
   async login(
     userLoginDto: UserLoginDto,
     refreshTokenPayload: Partial<RefreshToken>
-  ): Promise<string[]> {
+  ): Promise<{
+    access_token: string;
+    refresh_token?: string;
+    data: UserSerializer;
+  }> {
     const usernameIPkey = `${userLoginDto.username}_${refreshTokenPayload.ip}`;
     const resUsernameAndIP = await this.rateLimiter.get(usernameIPkey);
     let retrySecs = 0;
@@ -274,7 +278,12 @@ export class AuthService {
       );
     }
     await this.rateLimiter.delete(usernameIPkey);
-    return this.buildResponsePayload(accessToken, refreshToken);
+
+    return {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      data: userSerializer
+    };
   }
 
   /**

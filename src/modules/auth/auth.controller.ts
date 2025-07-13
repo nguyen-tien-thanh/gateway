@@ -88,12 +88,19 @@ export class AuthController {
       isRevoked: false,
       expires: new Date()
     };
-    const cookiePayload = await this.authService.login(
+    const tokenResponse = await this.authService.login(
       userLoginDto,
       refreshTokenPayload
     );
-    response.setHeader('Set-Cookie', cookiePayload);
-    return response.status(HttpStatus.NO_CONTENT).json({});
+
+    // Set cookies
+    const cookies = this.authService.buildResponsePayload(
+      tokenResponse.access_token,
+      tokenResponse.refresh_token
+    );
+    response.setHeader('Set-Cookie', cookies);
+
+    return response.status(HttpStatus.OK).json(tokenResponse);
   }
 
   @Post('/refresh')
