@@ -36,12 +36,12 @@ export class LoggingInterceptor implements NestInterceptor {
     const user = (request as any).user;
     const userInfo = user ? `${user.username} (ID: ${user.id})` : 'anonymous';
 
-    const controllerName = context.getClass().name;
-    const handlerName = context.getHandler().name;
+    // const controllerName = context.getClass().name;
+    // const handlerName = context.getHandler().name;
 
-    this.logger.log(
-      `\x1b[36m[START]\x1b[0m ${method} ${url} - ${controllerName}.${handlerName} - ${userInfo} - ${ip}`
-    );
+    // this.logger.log(
+    //   `\x1b[36m[START]\x1b[0m ${method} ${url} - ${controllerName}.${handlerName} - ${userInfo} - ${ip}`
+    // );
 
     // this.logger.debug(
     //   `\x1b[34m[REQ]\x1b[0m UA: ${userAgent}, Type: ${
