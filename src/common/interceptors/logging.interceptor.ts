@@ -93,9 +93,10 @@ export class LoggingInterceptor implements NestInterceptor {
           }
         }
 
-        this.logger.log(
-          `\x1b[32m[OK]\x1b[0m ${method} ${url} - ${statusCode} - ${duration}ms - ${userInfo}${bodyInfo}${respInfo}`
-        );
+        if (url !== '/auth/profile')
+          this.logger.log(
+            `\x1b[32m[OK]\x1b[0m ${method} ${url} - ${statusCode} - ${duration}ms - ${userInfo}${bodyInfo}${respInfo}`
+          );
 
         if (duration > 1000) {
           const level = duration > 5000 ? '\x1b[31m[SLOW]' : '\x1b[33m[SLOW]';
